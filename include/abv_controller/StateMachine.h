@@ -2,11 +2,13 @@
 #define STATEMACHINE_H
 
 #include <mutex>
+#include "abv_controller/Vehicle.h"
+#include <memory>
 
 class StateMachine
 {
 public:
-    StateMachine(/* args */);
+    StateMachine(std::shared_ptr<Vehicle> abv);
     ~StateMachine();
 
     enum class States
@@ -19,8 +21,6 @@ public:
     std::string toString(States aState); 
 
     void run(); 
-    void thruster_control(); 
-    void pose_control(); 
 
     /** Getters and Setters **/
     bool isCommandedToStop() {std::lock_guard<std::mutex> lock(mDoneMutex); return mDone; }
@@ -34,6 +34,8 @@ private:
     
     States mActiveState; 
     std::mutex mActiveStateMutex; 
+
+    std::shared_ptr<Vehicle> mVehicle; 
 
 };
 #endif // STATEMACHINE_H

@@ -2,13 +2,20 @@
 #include "abv_controller/CommandHandler.h"
 
 
-CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm) : mStateMachine(msm)
+CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_ptr<Vehicle> abv) : 
+    mStateMachine(msm), mVehicle(abv)
 {
     auto topicManager = RosTopicManager::getInstance(); 
     topicManager->createSubscriber<abv_idl::msg::AbvCommand>("abv_command", 
                                     std::bind(&CommandHandler::commandCallback, this, std::placeholders::_1)); 
 
     topicManager->spinNode(); 
+
+    while (!topicManager->isROSInitialized())
+    {
+    }
+    
+    printf("ROS Comms Initialized\n");
 }
 
 CommandHandler::~CommandHandler()
@@ -19,16 +26,28 @@ void CommandHandler::commandCallback(abv_idl::msg::AbvCommand::SharedPtr aCmdMsg
 {
     if(CommandType::THRUSTER == toEnum(aCmdMsg->type))
     {
+        mVehicle->setControlInput(convertToEigen(aCmdMsg->data)); 
         setNewActiveState(StateMachine::States::THRUSTER_CONTROL); 
     }
     else if (CommandType::POSE == toEnum(aCmdMsg->type))
     {
+        mVehicle->setGoalPose(convertToEigen(aCmdMsg->data)); 
         setNewActiveState(StateMachine::States::POSE_CONTROL);   
     }
     else if (CommandType::IDLE == toEnum(aCmdMsg->type))
     {
         setNewActiveState(StateMachine::States::IDLE); 
     }
+}
+
+Eigen::Vector3d CommandHandler::convertToEigen(abv_idl::msg::AbvVec3 aVectorToConvert)
+{
+    Eigen::Vector3d vectorToReturn;
+    vectorToReturn[0] = aVectorToConvert.x; 
+    vectorToReturn[1] = aVectorToConvert.y; 
+    vectorToReturn[2] = aVectorToConvert.yaw; 
+
+    return vectorToReturn; 
 }
 
 void CommandHandler::setNewActiveState(StateMachine::States aNewState)

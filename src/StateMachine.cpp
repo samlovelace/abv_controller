@@ -3,7 +3,8 @@
 #include <thread>
 #include <iostream> 
 
-StateMachine::StateMachine(/* args */) : mDone(false), mActiveState(States::IDLE)
+StateMachine::StateMachine(std::shared_ptr<Vehicle> abv) : 
+    mDone(false), mActiveState(States::IDLE), mVehicle(abv)
 {
 }
 
@@ -18,6 +19,8 @@ void StateMachine::run()
     // Calculate the loop duration
     const std::chrono::duration<double> loop_duration(1.0 / frequency);
 
+    printf("State Machine starting in %s\n", toString(mActiveState).c_str());
+
     while(!isCommandedToStop())
     {
         auto loop_start = std::chrono::steady_clock::now(); 
@@ -29,11 +32,11 @@ void StateMachine::run()
             break;
 
         case States::THRUSTER_CONTROL:
-            thruster_control(); 
+            mVehicle->doThrusterControl(); 
             break;
 
         case States::POSE_CONTROL: 
-            pose_control(); 
+            mVehicle->doPoseControl(); 
             break;
 
         default:
@@ -56,17 +59,6 @@ void StateMachine::run()
         }
 
     }
-}
-
-void StateMachine::thruster_control()
-{
-    printf("Doing Thruster Control\n"); 
-}
-
-void StateMachine::pose_control()
-{
-    printf("Doing Pose Control\n"); 
-    thruster_control(); 
 }
 
 std::string StateMachine::toString(StateMachine::States aState)
