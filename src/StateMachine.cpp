@@ -2,6 +2,7 @@
 #include "abv_controller/StateMachine.h"
 #include <thread>
 #include <iostream> 
+#include "plog/Log.h"
 
 StateMachine::StateMachine(std::shared_ptr<Vehicle> abv) : 
     mDone(false), mActiveState(States::IDLE), mVehicle(abv)
@@ -19,7 +20,7 @@ void StateMachine::run()
     // Calculate the loop duration
     const std::chrono::duration<double> loop_duration(1.0 / frequency);
 
-    printf("State Machine starting in %s\n", toString(mActiveState).c_str());
+    LOGD << "State Machine starting in " << toString(mActiveState);
 
     while(!isCommandedToStop())
     {
@@ -44,7 +45,6 @@ void StateMachine::run()
         }
 
     
-        
         // Calculate the time taken for the loop iteration
         auto loop_end = std::chrono::steady_clock::now();
         auto elapsed = loop_end - loop_start;

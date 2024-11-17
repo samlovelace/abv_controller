@@ -1,5 +1,6 @@
 
 #include "abv_controller/CommandHandler.h"
+#include "plog/Log.h"
 
 
 CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_ptr<Vehicle> abv) : 
@@ -15,7 +16,7 @@ CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_pt
     {
     }
     
-    printf("ROS Comms Initialized\n");
+    LOGD << "ROS Comms Initialized";
 }
 
 CommandHandler::~CommandHandler()

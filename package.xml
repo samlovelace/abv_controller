@@ -12,6 +12,9 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
+  <build_depend>tinyxml2</build_depend>
+  <exec_depend>tinyxml2</exec_depend>
+
   <depend>rclcpp</depend>
   <depend>abv_idl</depend>
 
