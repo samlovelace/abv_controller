@@ -57,7 +57,7 @@ void CommandHandler::setNewActiveState(StateMachine::States aNewState)
 
     if(aNewState != currentState)
     {
-        printf("Transitioning state machine from %s to %s\n", mStateMachine->toString(currentState).c_str(), mStateMachine->toString(aNewState).c_str());
+        LOGD << "Switching state machine from " << mStateMachine->toString(currentState).c_str() << " to " << mStateMachine->toString(aNewState).c_str(); 
         mStateMachine->setActiveState(aNewState); 
     }
 }

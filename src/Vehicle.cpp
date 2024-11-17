@@ -12,7 +12,6 @@ Vehicle::~Vehicle()
 
 void Vehicle::doThrusterControl()
 {
-    printf("doing Thruster control\n");
     Eigen::Vector3d controlInput = getControlInput(); 
     mThrusterCommander->commandThrusters(controlInput);
 }
