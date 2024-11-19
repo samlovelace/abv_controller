@@ -1,11 +1,14 @@
 
 #include "abv_controller/Vehicle.h"
+#include "plog/Log.h"
 
 
 Vehicle::Vehicle(/* args */) : 
-    mThrusterCommander(std::make_unique<ThrusterCommander>()), mLastInputRecvdAt(std::chrono::steady_clock::now()),
+    mThrusterCommander(std::make_unique<ThrusterCommander>()), mStateTracker(std::make_shared<VehicleStateTracker>()),
+    mStatePublisher(std::make_unique<RosStatePublisher>(mStateTracker)), mLastInputRecvdAt(std::chrono::steady_clock::now()),
     mStaleInputThreshold(std::chrono::duration<double>(std::chrono::milliseconds(500)))
 {
+    
 }
 
 Vehicle::~Vehicle()
@@ -20,6 +23,7 @@ void Vehicle::doThrusterControl()
 
 void Vehicle::doPoseControl()
 {
+    LOGW << "Goal Pose: " << getGoalPose(); 
     // 1. get the current pose of the vehicle and subtract from goal pose
 
     // 2. give error to mController to calc control input vector

@@ -36,6 +36,11 @@ void StateMachine::run()
             
             if(mVehicle->isControlInputStale())
             {   
+                // set control input to zeros so we stop the thrusters
+                Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
+                mVehicle->setControlInput(zeros); 
+                mVehicle->doThrusterControl(); 
+
                 setActiveState(States::IDLE); 
                 break; 
             }

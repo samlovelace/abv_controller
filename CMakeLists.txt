@@ -15,10 +15,14 @@ set(ABV_CONTROLLER_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/src/CommandHandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/ConfigurationManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp 
+    ${CMAKE_CURRENT_LIST_DIR}/src/OptitrackStateFetcher.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/RosStatePublisher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/RosTopicManager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/SimulatedStateFetcher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/StateMachine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/ThrusterCommander.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Vehicle.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/VehicleStateTracker.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})

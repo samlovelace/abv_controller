@@ -29,8 +29,8 @@ bool ConfigurationManager::loadConfiguration(const char* aConfigFile)
     // parse the state machine specific configuration settings
     tinyxml2::XMLElement* stateMachineElement = root->FirstChildElement("StateMachine");
     if (stateMachineElement) {
-        mConfigurations.stateMachineConfig.ControlMode = stateMachineElement->FirstChildElement("ControlMode")->GetText();
-        mConfigurations.stateMachineConfig.Frequency = stateMachineElement->FirstChildElement("Frequency")->IntText();
+        mConfigurations.stateMachineConfig.mControlMode = stateMachineElement->FirstChildElement("ControlMode")->GetText();
+        mConfigurations.stateMachineConfig.mFrequency = stateMachineElement->FirstChildElement("Frequency")->IntText();
     }
 
 
@@ -45,20 +45,20 @@ bool ConfigurationManager::loadConfiguration(const char* aConfigFile)
 
         tinyxml2::XMLElement* stateTrackerElement = vehicleElement->FirstChildElement("StateTracker");
         if (stateTrackerElement) {
-            mConfigurations.vehicleConfig.stateTrackerConfig.Interface = stateTrackerElement->FirstChildElement("Interface")->GetText();
-            mConfigurations.vehicleConfig.stateTrackerConfig.Rate = stateTrackerElement->FirstChildElement("Rate")->IntText();
+            mConfigurations.vehicleConfig.stateTrackerConfig.mInterface = stateTrackerElement->FirstChildElement("Interface")->GetText();
+            mConfigurations.vehicleConfig.stateTrackerConfig.mRate = stateTrackerElement->FirstChildElement("Rate")->IntText();
 
             tinyxml2::XMLElement* networkElement = stateTrackerElement->FirstChildElement("Network");
             if (networkElement) {
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.IP = networkElement->FirstChildElement("Server")->Attribute("ip");
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.CmdPort = networkElement->FirstChildElement("Server")->IntAttribute("cmdPort");
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.DataPort = networkElement->FirstChildElement("Server")->IntAttribute("dataPort");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.IP = networkElement->FirstChildElement("Server")->Attribute("ip");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.CmdPort = networkElement->FirstChildElement("Server")->IntAttribute("cmdPort");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.DataPort = networkElement->FirstChildElement("Server")->IntAttribute("dataPort");
 
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.IP = networkElement->FirstChildElement("Local")->Attribute("ip");
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.CmdPort = networkElement->FirstChildElement("Local")->IntAttribute("cmdPort");
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.DataPort = networkElement->FirstChildElement("Local")->IntAttribute("dataPort");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.IP = networkElement->FirstChildElement("Local")->Attribute("ip");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.CmdPort = networkElement->FirstChildElement("Local")->IntAttribute("cmdPort");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.DataPort = networkElement->FirstChildElement("Local")->IntAttribute("dataPort");
 
-                mConfigurations.vehicleConfig.stateTrackerConfig.network.Multicast.IP = networkElement->FirstChildElement("Multicast")->Attribute("ip");
+                mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Multicast.IP = networkElement->FirstChildElement("Multicast")->Attribute("ip");
             }
         }
 
@@ -73,10 +73,17 @@ bool ConfigurationManager::loadConfiguration(const char* aConfigFile)
             mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.arduino.CmdPort = controllerElement->FirstChildElement("Thrusters")->FirstChildElement("Network")->FirstChildElement("Arduino")->IntAttribute("cmdPort");
             mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.arduino.DataPort = controllerElement->FirstChildElement("Thrusters")->FirstChildElement("Network")->FirstChildElement("Arduino")->IntAttribute("dataPort");
 
-            LOGW << "Loaded controllerConfig thrusterConfig network stuff"; 
-
             mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOn = controllerElement->FirstChildElement("Thrusters")->FirstChildElement("ControlInputDiscretizationThresholds")->FirstChildElement("On")->DoubleText();
             mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOff = controllerElement->FirstChildElement("Thrusters")->FirstChildElement("ControlInputDiscretizationThresholds")->FirstChildElement("Off")->DoubleText();
+        }
+
+        tinyxml2::XMLElement* statePublisherElement = vehicleElement->FirstChildElement("StatePublisher"); 
+        {
+            if(statePublisherElement)
+            {
+                mConfigurations.vehicleConfig.statePublisherConfig.mInterface = statePublisherElement->FirstChildElement("Interface")->GetText();
+                mConfigurations.vehicleConfig.statePublisherConfig.mRate = statePublisherElement->FirstChildElement("Frequency")->IntText();
+            }
         }
 
     }
@@ -97,8 +104,8 @@ void ConfigurationManager::logConfiguration()
     )";
 
     LOGD << "StateMachine Configuration:";
-    LOGD << "   ControlMode: " << mConfigurations.stateMachineConfig.ControlMode;
-    LOGD << "   Frequency: " << mConfigurations.stateMachineConfig.Frequency;
+    LOGD << "   ControlMode: " << mConfigurations.stateMachineConfig.mControlMode;
+    LOGD << "   Frequency: " << mConfigurations.stateMachineConfig.mFrequency;
 
     LOGD << "Vehicle Configuration:";
     LOGD << "   Name: " << mConfigurations.vehicleConfig.Name;
@@ -108,19 +115,23 @@ void ConfigurationManager::logConfiguration()
     LOGD << "   Force2 (N): " << mConfigurations.vehicleConfig.Force2;
 
     LOGD << "   StateTracker Configuration:";
-    LOGD << "       Interface: " << mConfigurations.vehicleConfig.stateTrackerConfig.Interface;
-    LOGD << "       Rate (Hz): " << mConfigurations.vehicleConfig.stateTrackerConfig.Rate;
+    LOGD << "       Interface: " << mConfigurations.vehicleConfig.stateTrackerConfig.mInterface;
+    LOGD << "       Rate (Hz): " << mConfigurations.vehicleConfig.stateTrackerConfig.mRate;
+
+    LOGD << "   StatePublisher Configuration: ";
+    LOGD << "       Interface: " << mConfigurations.vehicleConfig.statePublisherConfig.mInterface; 
+    LOGD << "       Rate (Hz): " << mConfigurations.vehicleConfig.statePublisherConfig.mRate; 
 
     LOGD << "    Network Configuration:";
-    LOGD << "       Server IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.IP;
-    LOGD << "       Server CmdPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.CmdPort;
-    LOGD << "       Server DataPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Server.DataPort;
+    LOGD << "       Server IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.IP;
+    LOGD << "       Server CmdPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.CmdPort;
+    LOGD << "       Server DataPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server.DataPort;
 
-    LOGD << "       Local IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.IP;
-    LOGD << "       Local CmdPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.CmdPort;
-    LOGD << "       Local DataPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Local.DataPort;
+    LOGD << "       Local IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.IP;
+    LOGD << "       Local CmdPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.CmdPort;
+    LOGD << "       Local DataPort: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local.DataPort;
 
-    LOGD << "       Multicast IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.network.Multicast.IP;
+    LOGD << "       Multicast IP: " << mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Multicast.IP;
 
     LOGD << "   Controller Configuration:";
     LOGD << "       Kp: " << mConfigurations.vehicleConfig.controllerConfig.Kp;

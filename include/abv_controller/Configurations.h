@@ -6,8 +6,8 @@
 #include <eigen3/Eigen/Dense>
 
 struct StateMachineConfig {
-    std::string ControlMode;
-    int Frequency;
+    std::string mControlMode;
+    int mFrequency;
 };
 
 struct Socket {
@@ -24,9 +24,14 @@ struct Network {
 };
 
 struct StateTrackerConfig {
-    std::string Interface;
-    int Rate;
-    Network network;
+    std::string mInterface;
+    int mRate;
+    Network mNetwork;
+};
+
+struct StatePublisherConfig {
+    std::string mInterface; 
+    int mRate; 
 };
 
 struct ThrusterConfig {
@@ -53,6 +58,7 @@ struct VehicleConfig {
     double Force2;
     std::string Force2Units;
     StateTrackerConfig stateTrackerConfig;
+    StatePublisherConfig statePublisherConfig; 
     ControllerConfig controllerConfig;
 };
 

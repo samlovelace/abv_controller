@@ -27,6 +27,11 @@
             </Network>
         </StateTracker>
 
+        <StatePublisher>
+            <Interface>ROS2</Interface>
+            <Frequency>10</Frequency>
+        </StatePublisher>
+
         <Controller type="PID">
 
             <Kp>5 5 5</Kp>

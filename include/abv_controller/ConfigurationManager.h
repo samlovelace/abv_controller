@@ -19,8 +19,8 @@ public:
     void logConfiguration();
 
     ThrusterConfig getThrusterConfig() { return mConfigurations.vehicleConfig.controllerConfig.thrusterConfig; }
-
-
+    StateTrackerConfig getStateTrackerConfig() {return mConfigurations.vehicleConfig.stateTrackerConfig;}
+    StatePublisherConfig getStatePublisherConfig() {return mConfigurations.vehicleConfig.statePublisherConfig;}
 
 private: 
     ConfigurationManager();

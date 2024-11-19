@@ -67,11 +67,6 @@ void createLogger() {
     static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;  // Create the 2nd appender.
     plog::init(plog::verbose, &fileAppender).addAppender(&consoleAppender);  // Initialize the logger with both appenders.
 
-    // Log the creation of the log file
-    LOGD << logFileName << " created";
-
-    LOGW << std::filesystem::current_path(); 
-
     // Initialize a separate logger for the data log file
     //static plog::RollingFileAppender<plog::TxtFormatter> dataFileAppender(datalogFilePath.c_str());
     //plog::init<1>(plog::verbose, &dataFileAppender);  // Use a separate instance for the data log

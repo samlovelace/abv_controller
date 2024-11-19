@@ -56,8 +56,7 @@ void CommandHandler::setNewActiveState(StateMachine::States aNewState)
     auto currentState = mStateMachine->getActiveState(); 
 
     if(aNewState != currentState)
-    {
-        LOGD << "Switching state machine from " << mStateMachine->toString(currentState).c_str() << " to " << mStateMachine->toString(aNewState).c_str(); 
+    { 
         mStateMachine->setActiveState(aNewState); 
     }
 }

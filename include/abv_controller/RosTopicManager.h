@@ -18,6 +18,17 @@ public:
     void spinNode();
     bool isROSInitialized() { return rclcpp::ok(); }
 
+    rclcpp::PublisherBase::SharedPtr getPublisher(const std::string& aTopicName)
+    {
+        if(mPublishers.find(aTopicName) != mPublishers.end())
+        {
+            return mPublishers[aTopicName];
+        }
+        else {
+            // 
+        }
+    }
+
     template<typename T>
     void createPublisher(const std::string& topicName) 
     {
