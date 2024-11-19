@@ -25,7 +25,7 @@ public:
     /** Getters and Setters **/
     bool isCommandedToStop() {std::lock_guard<std::mutex> lock(mDoneMutex); return mDone; }
     void stop() {std::lock_guard<std::mutex> lock(mDoneMutex); mDone = true; }
-    void setActiveState(States aNewActiveState) {std::lock_guard<std::mutex> lock(mActiveStateMutex); mActiveState = aNewActiveState;}
+    void setActiveState(States aNewActiveState); 
     States getActiveState() {std::lock_guard<std::mutex> lock(mActiveStateMutex); return mActiveState;}
 
 private:

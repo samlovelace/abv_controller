@@ -33,6 +33,13 @@ void StateMachine::run()
             break;
 
         case States::THRUSTER_CONTROL:
+            
+            if(mVehicle->isControlInputStale())
+            {   
+                setActiveState(States::IDLE); 
+                break; 
+            }
+            
             mVehicle->doThrusterControl(); 
             break;
 
@@ -59,6 +66,15 @@ void StateMachine::run()
         }
 
     }
+}
+
+void StateMachine::setActiveState(StateMachine::States aState)
+{
+    LOGD << "Switching state machine from " << toString(getActiveState()).c_str() << " to " 
+                                                    << toString(aState).c_str();
+
+    std::lock_guard<std::mutex> lock(mActiveStateMutex); 
+    mActiveState = aState;    
 }
 
 std::string StateMachine::toString(StateMachine::States aState)

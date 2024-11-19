@@ -17,18 +17,22 @@ public:
 
     void setGoalPose(Eigen::Vector3d aGoalPose) {std::lock_guard<std::mutex> lock(mGoalPoseMutex); mGoalPose = aGoalPose;}
     Eigen::Vector3d getGoalPose() {std::lock_guard<std::mutex> lock(mGoalPoseMutex); return mGoalPose; }
-    void setControlInput(Eigen::Vector3d aControlInput) {std::lock_guard<std::mutex> lock(mControlInputMutex); mControlInput = aControlInput;}
+    void setControlInput(Eigen::Vector3d aControlInput);
     Eigen::Vector3d getControlInput() {std::lock_guard<std::mutex> lock(mControlInputMutex); return mControlInput; }
+
+    bool isControlInputStale() {return std::chrono::steady_clock::now() - mLastInputRecvdAt > mStaleInputThreshold ? true : false;}
 
 
 private:
     Eigen::Vector3d mGoalPose; 
     Eigen::Vector3d mControlInput; 
+    std::chrono::steady_clock::time_point mLastInputRecvdAt; 
+    std::chrono::duration<double> mStaleInputThreshold;  
 
     std::mutex mGoalPoseMutex; 
     std::mutex mControlInputMutex; 
 
-    std::unique_ptr<ThrusterCommander> mThrusterCommander; 
+    std::unique_ptr<ThrusterCommander> mThrusterCommander;
 
 };
 #endif // VEHICLE_H
