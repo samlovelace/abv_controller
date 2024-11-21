@@ -4,7 +4,7 @@
 
 ThrusterCommander::ThrusterCommander() : 
     mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), 
-    mThrusterCommand("900000000")
+    mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>("127.0.0.1", 6969))
 {
     mMatrixOfThrustDirCombinations << 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 0, 0, 0, 1, 1, 1, -1, 1, -1, -1, -1, 0,
 			0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
@@ -17,14 +17,14 @@ ThrusterCommander::~ThrusterCommander()
 
 void ThrusterCommander::commandThrusters(Eigen::Vector3d aControlInput)
 {
-    // 1.  convert control input to thruster dir vector
+    // convert control input to thruster dir vector
     Eigen::Vector3i thrustDirVector = convertToThrustVector(aControlInput); 
 
-    // 2.  convert thrust dir vector into thruster combination 
+    // convert thrust dir vector into thruster combination 
     determineThrusterCommand(thrustDirVector); 
 
-    // 3.  send to thrusters via UDP
-    LOGW << "Thruster Command: " << mThrusterCommand; 
+    // send to thrusters via UDP
+    mUdpClient->send(mThrusterCommand); 
 } 
 
 Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aControlInput)

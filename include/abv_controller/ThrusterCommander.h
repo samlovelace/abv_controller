@@ -4,8 +4,10 @@
 #include <eigen3/Eigen/Dense>
 #include "abv_controller/Configurations.h"
 #include "abv_controller/ConfigurationManager.h"
+#include "abv_controller/UdpClient.h"
 
 #include <mutex> 
+#include <memory>
 
 class ThrusterCommander
 {
@@ -23,6 +25,8 @@ private:
     std::string mThrusterCommand; 
     std::mutex mThrusterCommandMutex;
     Eigen::Matrix<int, 3, 27> mMatrixOfThrustDirCombinations; 
+
+    std::unique_ptr<UdpClient> mUdpClient; 
 
 };
 
