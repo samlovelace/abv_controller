@@ -21,6 +21,7 @@ set(ABV_CONTROLLER_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/src/SimulatedStateFetcher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/StateMachine.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/ThrusterCommander.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/UdpClient.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Vehicle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/VehicleStateTracker.cpp
 )
