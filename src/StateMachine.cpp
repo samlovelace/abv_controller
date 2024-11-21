@@ -65,7 +65,7 @@ void StateMachine::run()
         if (elapsed < loop_duration) {
             std::this_thread::sleep_for(loop_duration - elapsed);
         } else {
-            std::cerr << "Loop overrun! Elapsed time: " 
+            LOGE << "Loop overrun! Elapsed time: " 
                       << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
                       << " ms\n";
         }
