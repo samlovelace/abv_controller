@@ -7,6 +7,7 @@
 #include "abv_controller/ThrusterCommander.h"
 #include "abv_controller/VehicleStateTracker.h"
 #include "abv_controller/RosStatePublisher.h"
+#include "abv_controller/Controller.h"
 
 class Vehicle
 {
@@ -37,6 +38,7 @@ private:
     std::unique_ptr<ThrusterCommander> mThrusterCommander;
     std::shared_ptr<VehicleStateTracker> mStateTracker; 
     std::unique_ptr<RosStatePublisher> mStatePublisher; 
+    std::unique_ptr<Controller> mController; 
 
 
 };

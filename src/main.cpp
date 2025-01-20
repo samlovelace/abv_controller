@@ -31,7 +31,7 @@ int main()
 
     if(!ConfigurationManager::getInstance()->loadConfiguration(configFilePath.c_str()))
     {
-        printf("Could not load %s\n", configFilePath.c_str()); 
+        printf("Could not load config file at %s\n", configFilePath.c_str()); 
         return 0; 
     }
 

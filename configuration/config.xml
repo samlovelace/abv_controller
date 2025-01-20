@@ -3,7 +3,7 @@
 <Configuration>
 
     <StateMachine>
-        <ControlMode>Pose</ControlMode>
+        <ControlMode>Pose</ControlMode> <!-- TODO: remove since not actually used -->
         <Frequency>10</Frequency>
     </StateMachine>
 
@@ -13,7 +13,6 @@
         <Force1 units="N"> 0.15 </Force1>                         <!--f1 is the force of 1 thruster when 1 is firing-->
         <Force2 units="N"> 0.08</Force2>                          <!--f2 is the force of 1 thruster when 2 are firing-->
     
-
         <StateTracker>
             <Interface>Simulated</Interface>
             <Rate>10</Rate>                    <!-- Rate at which the state is updated -->          
@@ -23,7 +22,6 @@
                 <Server ip="192.168.1.3" cmdPort="1510" dataPort="1511"/>                   <!-- Server is the computer running OptiTrack-->
                 <Local ip="192.168.1.15" cmdPort="1002" dataPort="1001"/>                   <!-- Local is the IP of the Vehicle or Dev/Control Laptop -->
                 <Multicast ip="239.255.42.99" cmdPort="" dataPort=""/>                      <!--Multicast IP Address that OptiTrack streams on -->
-                
             </Network>
         </StateTracker>
 

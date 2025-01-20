@@ -3,6 +3,7 @@
 #include "abv_controller/OptitrackStateFetcher.h"
 #include "abv_controller/SimulatedStateFetcher.h"
 #include "plog/Log.h"
+#include <thread>
 
 VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig())
 {
@@ -21,6 +22,8 @@ VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getIn
     default:
         break;
     }
+
+    mStateTrackingThread = std::thread(&VehicleStateTracker::stateTrackerLoop, this); 
 }
 
 VehicleStateTracker::~VehicleStateTracker()
@@ -46,6 +49,36 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
 
     return enumToReturn; 
 }
+
+// TODO: figure out what behavior we want for this. Constantly state tracking or able to stop and restart?
+void VehicleStateTracker::stateTrackerLoop()
+{   
+    bool done = false; 
+    const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate);
+
+    LOGD << "Starting stateTrackerLoop thread"; 
+
+    while(!done)
+    {
+        auto start = std::chrono::steady_clock::now(); 
+
+        mStateFetcher->fetchState(); 
+
+        // Calculate the time taken for the loop iteration
+        auto loop_end = std::chrono::steady_clock::now();
+        auto elapsed = loop_end - start;
+
+        // Sleep for the remaining time to maintain the frequency
+        if (elapsed < loop_duration) {
+            std::this_thread::sleep_for(loop_duration - elapsed);
+        } else {
+            LOGE << "Loop overrun! Elapsed time: " 
+                      << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
+                      << " ms\n";
+        }
+    }
+}
+
 
 
 

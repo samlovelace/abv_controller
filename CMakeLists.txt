@@ -14,6 +14,7 @@ find_package(Eigen3 REQUIRED)
 set(ABV_CONTROLLER_SOURCES 
     ${CMAKE_CURRENT_LIST_DIR}/src/CommandHandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/ConfigurationManager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/Controller.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp 
     ${CMAKE_CURRENT_LIST_DIR}/src/OptitrackStateFetcher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/RosStatePublisher.cpp

@@ -33,7 +33,7 @@ void StateMachine::run()
             break;
 
         case States::THRUSTER_CONTROL:
-            
+
             if(mVehicle->isControlInputStale())
             {   
                 // set control input to zeros so we stop the thrusters
@@ -44,11 +44,12 @@ void StateMachine::run()
                 setActiveState(States::IDLE); 
                 break; 
             }
-            
+
             mVehicle->doThrusterControl(); 
             break;
 
         case States::POSE_CONTROL: 
+        
             mVehicle->doPoseControl(); 
             break;
 
@@ -56,7 +57,6 @@ void StateMachine::run()
             break;
         }
 
-    
         // Calculate the time taken for the loop iteration
         auto loop_end = std::chrono::steady_clock::now();
         auto elapsed = loop_end - loop_start;
