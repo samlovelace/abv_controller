@@ -29,6 +29,7 @@ public:
     Eigen::Matrix<double, 6, 1> getCurrentState() { std::scoped_lock lock(mCurrentStateMutex); return mCurrentState; }
 
     bool doStateTracking() {std::lock_guard<std::mutex> lock(mStateTrackingMutex); return mDoStateTracking; }
+    void setStateTracking(bool aFlag) {std::lock_guard<std::mutex> lock(mStateTrackingMutex); mDoStateTracking = aFlag; }
 
 private:
     // polymorphic state fetcher interface so we arent tied to optiTrack

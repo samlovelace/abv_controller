@@ -1,28 +1,37 @@
 
 #include "abv_controller/RosStatePublisher.h"
 #include "abv_controller/RosTopicManager.h"
-
-
 #include <thread>
 #include <chrono> 
+#include "plog/Log.h"
 
 RosStatePublisher::RosStatePublisher(std::shared_ptr<VehicleStateTracker> aStateTracker) : 
     mStateTracker(aStateTracker), mConfig(ConfigurationManager::getInstance()->getStatePublisherConfig())
 {
-    RosTopicManager::getInstance()->createPublisher<abv_idl::msg::AbvState>("abv_state"); 
+    RosTopicManager::getInstance()->createPublisher<abv_idl::msg::AbvState>("abv_state");
+    mStatePublishThread = std::thread(&RosStatePublisher::publishStateLoop, this); 
 }
 
 RosStatePublisher::~RosStatePublisher()
 {
+    // worst case this gets called here 
+    setPublishingState(false); 
+    
+    if(mStatePublishThread.joinable())
+    {
+        LOGD << "Joining state publishing thread"; 
+        mStatePublishThread.join(); 
+    }
 }
 
-void RosStatePublisher::publishState()
+void RosStatePublisher::publishStateLoop()
 {
-    bool done = false; 
     auto topicManager = RosTopicManager::getInstance(); 
     const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate); 
 
-    while(!done)
+    LOGD << "Starting ROS state publishing thread";
+
+    while(shouldPublishState())
     {
         auto loop_start = std::chrono::steady_clock::now();
 

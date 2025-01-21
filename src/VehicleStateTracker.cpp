@@ -28,6 +28,14 @@ VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getIn
 
 VehicleStateTracker::~VehicleStateTracker()
 {
+    setStateTracking(false); 
+
+    if(mStateTrackingThread.joinable())
+    {
+        LOGD << "Joining state tracking thread"; 
+        mStateTrackingThread.join(); 
+    }
+
 }
 
 VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTrackerType)
@@ -56,9 +64,9 @@ void VehicleStateTracker::stateTrackerLoop()
     bool done = false; 
     const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate);
 
-    LOGD << "Starting stateTrackerLoop thread"; 
+    LOGD << "Starting state tracking thread"; 
 
-    while(!done)
+    while(doStateTracking())
     {
         auto start = std::chrono::steady_clock::now(); 
 
