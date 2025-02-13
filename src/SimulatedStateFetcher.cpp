@@ -5,12 +5,19 @@
 
 SimulatedStateFetcher::SimulatedStateFetcher(/* args */)
 {
-    RosTopicManager::getInstance()->createSubscriber<abv_idl::msg::AbvState>("abv_state_simulated", 
-                                    std::bind(&SimulatedStateFetcher::stateCallback, this, std::placeholders::_1));
+    
 }
 
 SimulatedStateFetcher::~SimulatedStateFetcher()
 {
+}
+
+bool SimulatedStateFetcher::init()
+{
+    RosTopicManager::getInstance()->createSubscriber<abv_idl::msg::AbvState>("abv_state_simulated", 
+                                                std::bind(&SimulatedStateFetcher::stateCallback, this, std::placeholders::_1));
+
+    return true; 
 }
 
 void SimulatedStateFetcher::stateCallback(abv_idl::msg::AbvState::SharedPtr aSimState)

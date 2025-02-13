@@ -10,6 +10,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp)
 find_package(abv_idl)
 find_package(Eigen3 REQUIRED)
+find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
+
 
 set(ABV_CONTROLLER_SOURCES 
     ${CMAKE_CURRENT_LIST_DIR}/src/CommandHandler.cpp
@@ -32,11 +34,13 @@ add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
 include_directories(${PROJECT_NAME} 
   ${CMAKE_CURRENT_LIST_DIR}/include 
   ${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
+  ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/include
   /usr/include
+
 )
 
 ament_target_dependencies(${PROJECT_NAME} rclcpp abv_idl Eigen3)
-target_link_libraries(${PROJECT_NAME} /usr/lib/x86_64-linux-gnu/libtinyxml2.so) 
+target_link_libraries(${PROJECT_NAME} /usr/lib/x86_64-linux-gnu/libtinyxml2.so ${NATNET_LIB}) 
 
 # Install the executable
 install(TARGETS

@@ -10,8 +10,8 @@ public:
     SimulatedStateFetcher(/* args */);
     ~SimulatedStateFetcher() override; 
 
+    bool init() override; 
     Eigen::Matrix<double, 6,1> fetchState() override; 
-
 
 private:
     void stateCallback(abv_idl::msg::AbvState::SharedPtr aSimState); 
