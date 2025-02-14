@@ -84,12 +84,12 @@ void OptitrackStateFetcher::frameRecvdCallback(sFrameOfMocapData* data, void* pU
             Eigen::Quaternion q(rb.qw, rb.qx, rb.qy, rb.qz); 
             q.normalize(); 
 
-            Eigen::Matrix3d rotationMatrix = q.toRotationMatrix(); 
-            Eigen::Vector3d angles = rotationMatrix.eulerAngles(2, 1, 0); 
+            Eigen::Matrix3f rotationMatrix = q.toRotationMatrix(); 
+            Eigen::Vector3f angles = rotationMatrix.eulerAngles(2, 1, 0); 
 
-            state[3] = angles[0]; 
-            state[4] = angles[1]; 
-            state[5] = angles[2]; 
+            state[3] = (double)angles[0]; 
+            state[4] = (double)angles[1]; 
+            state[5] = (double)angles[2]; 
 
             setLatestState(state); 
         }

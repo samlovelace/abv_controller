@@ -14,7 +14,7 @@
         <Force2 units="N"> 0.08</Force2>                          <!--f2 is the force of 1 thruster when 2 are firing-->
     
         <StateTracker>
-            <Interface>Simulated</Interface>
+            <Interface>OptiTrack</Interface>
             <Rate>10</Rate>                    <!-- Rate at which the state is updated -->          
 
             <!--Only Valid when the above is <Interface>OptiTrack</Interface> -->

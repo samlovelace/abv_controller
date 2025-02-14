@@ -16,7 +16,7 @@ VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getIn
         LOGD << "Configuring ABV to use Simulated state feedback"; 
         break;
     case FetcherType::OPTITRACK: 
-        mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig); 
+        mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mNetwork); 
         LOGD << "Configuring ABV to use OptiTrack for state feedback"; 
         break;
     default:
