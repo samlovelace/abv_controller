@@ -10,12 +10,14 @@ struct StateMachineConfig {
     int mFrequency;
 };
 
+// TODO: rename to SocketConfig
 struct Socket {
     std::string IP;
     int CmdPort;
     int DataPort;
 };
 
+// TODO: rename to NetworkConfig
 struct Network {
     Socket Server;
     Socket Local;
