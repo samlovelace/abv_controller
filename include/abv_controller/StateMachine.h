@@ -16,6 +16,7 @@ public:
         IDLE, 
         THRUSTER_CONTROL, 
         POSE_CONTROL, 
+        VELOCITY_CONTROL, 
         NUM_TYPES
     };
     std::string toString(States aState); 

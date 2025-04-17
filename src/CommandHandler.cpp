@@ -35,6 +35,11 @@ void CommandHandler::commandCallback(abv_idl::msg::AbvCommand::SharedPtr aCmdMsg
         mVehicle->setGoalPose(convertToEigen(aCmdMsg->data)); 
         setNewActiveState(StateMachine::States::POSE_CONTROL);   
     }
+    else if (CommandType::VELOCITY == toEnum(aCmdMsg->type))
+    {
+        mVehicle->setGoalVelocity(convertToEigen(aCmdMsg->data));
+        setNewActiveState(StateMachine::States::VELOCITY_CONTROL); 
+    }
     else if (CommandType::IDLE == toEnum(aCmdMsg->type))
     {
         setNewActiveState(StateMachine::States::IDLE); 
@@ -73,6 +78,10 @@ CommandHandler::CommandType CommandHandler::toEnum(const std::string& aType)
     {
         enumToReturn = CommandType::POSE; 
     }
+    else if ("Velocity" == aType || "vel" == aType || "velocity" == aType)
+    {
+        enumToReturn = CommandType::VELOCITY; 
+    }
     else if ("Idle" == aType || "idle" == aType)
     {
         enumToReturn = CommandType::IDLE; 
@@ -99,6 +108,9 @@ std::string CommandHandler::toString(CommandType aCmdType)
         break; 
     case CommandType::POSE: 
         stringToReturn = "POSE_CONTROL"; 
+        break;
+    case CommandType::VELOCITY: 
+        stringToReturn = "VELOCITY_CONTROL"; 
         break;
     default:
         break;

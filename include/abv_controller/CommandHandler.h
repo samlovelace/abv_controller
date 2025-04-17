@@ -19,6 +19,7 @@ public:
     {
         THRUSTER, 
         POSE, 
+        VELOCITY,
         IDLE, 
         NUM_TYPES
     };

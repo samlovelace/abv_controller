@@ -17,23 +17,28 @@ public:
 
     void doThrusterControl(); 
     void doPoseControl(); 
+    void doVelocityControl(); 
 
-    void setGoalPose(Eigen::Vector3d aGoalPose) {std::lock_guard<std::mutex> lock(mGoalPoseMutex); mGoalPose = aGoalPose;}
-    Eigen::Vector3d getGoalPose() {std::lock_guard<std::mutex> lock(mGoalPoseMutex); return mGoalPose; }
-    void setControlInput(Eigen::Vector3d aControlInput);
-    Eigen::Vector3d getControlInput() {std::lock_guard<std::mutex> lock(mControlInputMutex); return mControlInput; }
+    void setGoalPose(Eigen::Vector3d aGoalPose);
+    void setGoalVelocity(Eigen::Vector3d aGoalVel); 
+    void setControlInput(Eigen::Vector3d aControlInput); 
 
-    bool isControlInputStale() {return std::chrono::steady_clock::now() - mLastInputRecvdAt > mStaleInputThreshold ? true : false;}
+    Eigen::Vector3d getGoalPose();
+    Eigen::Vector3d getGoalVelocity(); 
+    Eigen::Vector3d getControlInput(); 
 
+    bool isControlInputStale(); 
 
 private:
     Eigen::Vector3d mGoalPose; 
+    Eigen::Vector3d mGoalVelocity; 
     Eigen::Vector3d mControlInput; 
     std::chrono::steady_clock::time_point mLastInputRecvdAt; 
     std::chrono::duration<double> mStaleInputThreshold;  
 
     std::mutex mGoalPoseMutex; 
     std::mutex mControlInputMutex; 
+    std::mutex mGoalVelocityMutex;
 
     std::unique_ptr<ThrusterCommander> mThrusterCommander;
     std::shared_ptr<VehicleStateTracker> mStateTracker; 
