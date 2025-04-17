@@ -35,7 +35,9 @@ Eigen::Vector3d Controller::PID(Eigen::Vector3d aPoseError)
                           mConfig.Kd[i] * poseErrorDeriv[i];
     }
 
-    mPrevTime = steady_clock::now();
     mPrevPoseError = aPoseError; 
-    mPrevPoseErrorIntegral = poseErrorIntegral;  
+    mPrevPoseErrorIntegral = poseErrorIntegral; 
+    mPrevTime = steady_clock::now();
+
+    return controlInput;
 }
