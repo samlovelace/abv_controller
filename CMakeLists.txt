@@ -5,11 +5,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# use ORIGIN so executable looks for .so files in same folder
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp)
 find_package(abv_idl)
 find_package(Eigen3 REQUIRED)
+find_package(yaml-cpp REQUIRED)
 find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
 
 
@@ -40,12 +46,11 @@ include_directories(${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME} rclcpp abv_idl Eigen3)
-target_link_libraries(${PROJECT_NAME} /usr/lib/x86_64-linux-gnu/libtinyxml2.so ${NATNET_LIB}) 
+target_link_libraries(${PROJECT_NAME} yaml-cpp ${NATNET_LIB}) 
 
 # Install the executable
-install(TARGETS
-  ${PROJECT_NAME}
-  DESTINATION lib/${PROJECT_NAME}
-)
+install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
+install(FILES dependencies/NatNetSDK4.1/lib/libNatNet.so DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

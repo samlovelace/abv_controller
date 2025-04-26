@@ -1,0 +1,46 @@
+StateMachine: 
+  Rate: 10 # hz
+
+Vehicle: 
+  Name: Optimus 
+  Mass: 12.6 # kg 
+  Inertia: 0.3 # kg-m^2
+  Force1: 0.15 # N
+  Force2: 0.08 # N
+
+StateTracker: 
+  Interface: optitrack
+  Rate: 10 # Hz
+
+Controller:
+  Kp: [5.0, 5.0, 5.0]
+  Ki: [0, 0, 0]
+  Kd: [10, 10, 10]
+
+Thrusters:
+  InputDiscretization:
+    On: 0.2
+    Off: 0.09
+
+Network: 
+  Arduino: 
+    Ip: 192.168.1.18
+    cmdPort: 1001
+    dataPort: 1000
+
+  Local: 
+    Ip: 192.168.1.15
+    cmdPort: 1002
+    dataPort: 1001
+  
+  Server: 
+    Ip: 192.168.1.3
+    cmdPort: 1510
+    dataPort: 1511
+
+  Multicast: 
+    Ip: 239.255.42.99
+    cmdPort: 1510
+    dataPort: 1511
+  
+  

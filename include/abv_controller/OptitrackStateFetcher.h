@@ -12,7 +12,7 @@
 class OptitrackStateFetcher : public IStateFetcher
 {
 public:
-    OptitrackStateFetcher(Network aConfig);
+    OptitrackStateFetcher(NetworkConfig aConfig);
     ~OptitrackStateFetcher() override; 
 
     bool init() override; 
@@ -22,7 +22,7 @@ public:
 
 private:
     std::unique_ptr<NatNetClient> mNatNetClient;
-    Network mConfig; 
+    NetworkConfig mConfig; 
     Eigen::Matrix<double, 6, 1> mLatestState; 
     int32_t mID; 
 

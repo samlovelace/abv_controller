@@ -4,31 +4,31 @@
 #include <string>
 #include <vector>
 #include <eigen3/Eigen/Dense>
+#include <yaml-cpp/yaml.h>
+#include <plog/Log.h>
 
 struct StateMachineConfig {
     std::string mControlMode;
     int mFrequency;
 };
 
-// TODO: rename to SocketConfig
-struct Socket {
+struct SocketConfig {
     std::string IP;
     int CmdPort;
     int DataPort;
 };
 
-// TODO: rename to NetworkConfig
-struct Network {
-    Socket Server;
-    Socket Local;
-    Socket Multicast;
-    Socket Arduino;
+struct NetworkConfig {
+    SocketConfig Server;
+    SocketConfig Local;
+    SocketConfig Multicast;
+    SocketConfig Arduino;
 };
 
 struct StateTrackerConfig {
     std::string mInterface;
     int mRate;
-    Network mNetwork;
+    NetworkConfig mNetwork;
 };
 
 struct StatePublisherConfig {
@@ -37,7 +37,7 @@ struct StatePublisherConfig {
 };
 
 struct ThrusterConfig {
-    Socket arduino;
+    SocketConfig arduino;
     double uOn;
     double uOff;
 };
@@ -52,13 +52,10 @@ struct ControllerConfig {
 struct VehicleConfig {
     std::string Name;
     double Mass;
-    std::string MassUnits;
     double Inertia;
-    std::string InertiaUnits;
     double Force1;
-    std::string Force1Units;
     double Force2;
-    std::string Force2Units;
+
     StateTrackerConfig stateTrackerConfig;
     StatePublisherConfig statePublisherConfig; 
     ControllerConfig controllerConfig;
@@ -71,12 +68,20 @@ struct Configurations {
 
 namespace ConfigUtils
 {
-    inline Eigen::Vector3d parseVector3d(const char* text) {
-    Eigen::Vector3d vec;
-    std::istringstream iss(text);
-    iss >> vec[0] >> vec[1] >> vec[2];
-    return vec;
-}
+    static Eigen::Vector3d parseVector3d(const YAML::Node& node) 
+    {
+        Eigen::Vector3d vec;
+
+        if (node && node.IsSequence() && node.size() == 3) {
+            vec[0] = node[0].as<double>();
+            vec[1] = node[1].as<double>();
+            vec[2] = node[2].as<double>();
+        } else {
+            throw std::runtime_error("Invalid Vector3d format in YAML.");
+        }
+
+        return vec;
+    }
 }
 
 #endif // CONFIGURATIONS_H
