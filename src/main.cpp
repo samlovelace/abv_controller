@@ -5,6 +5,7 @@
 #include "abv_controller/Vehicle.h"
 #include "abv_controller/Logger.h"
 #include "abv_controller/ConfigurationManager.h"
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 // Signal handler function
 void signalHandler(int signal) {
@@ -27,16 +28,13 @@ int main()
     std::signal(SIGINT, signalHandler); 
     createLogger(); 
 
-    std::string configFilePath = "./src/abv_controller/configuration/config.xml";
+    std::string configFilePath = ament_index_cpp::get_package_share_directory("abv_controller") + "/configuration/config.yaml"; 
 
-    if(!ConfigurationManager::getInstance()->loadConfiguration(configFilePath.c_str()))
+    if(!ConfigurationManager::getInstance()->loadConfiguration(configFilePath))
     {
         printf("Could not load config file at %s\n", configFilePath.c_str()); 
         return 0; 
     }
-
-    // if you got here, config file loaded successfully
-    ConfigurationManager::getInstance()->logConfiguration(); 
     
     rclcpp::init(0, nullptr);
     std::shared_ptr<Vehicle> abv = std::make_shared<Vehicle>(); 

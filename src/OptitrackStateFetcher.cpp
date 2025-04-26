@@ -2,7 +2,7 @@
 #include "abv_controller/OptitrackStateFetcher.h"
 #include "plog/Log.h"
 
-OptitrackStateFetcher::OptitrackStateFetcher(Network aConfig) : 
+OptitrackStateFetcher::OptitrackStateFetcher(NetworkConfig aConfig) : 
         mNatNetClient(nullptr), mConfig(aConfig), mID(1)
 {
 

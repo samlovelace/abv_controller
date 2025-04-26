@@ -15,7 +15,7 @@ public:
         return &instance;
     }
 
-    bool loadConfiguration(const char* aConfigFile);
+    bool loadConfiguration(const std::string& aFilePath);
     void logConfiguration();
 
     ThrusterConfig getThrusterConfig() { return mConfigurations.vehicleConfig.controllerConfig.thrusterConfig; }
