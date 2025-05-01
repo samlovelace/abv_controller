@@ -23,6 +23,7 @@ void Vehicle::doThrusterControl()
 
 void Vehicle::doPoseControl()
 {
+    // TODO: this probably isnt going to be a simple subtraction for the yaw angle 
     Eigen::Vector3d poseError = mStateTracker->getCurrentPose() - getGoalPose(); 
     Eigen::Vector3d controlInput = mController->computeControlInput(poseError); 
     setControlInput(controlInput);
@@ -31,6 +32,7 @@ void Vehicle::doPoseControl()
 
 void Vehicle::doVelocityControl()
 {
+    // TODO: this probably isnt going to be a simple subtraction for the yaw velocity
     Eigen::Vector3d velError = mStateTracker->getCurrentVelocity() - getGoalVelocity(); 
     Eigen::Vector3d controlInput = mController->computeControlInput(velError); 
     setControlInput(controlInput); 

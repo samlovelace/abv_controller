@@ -4,11 +4,11 @@
 
 ThrusterCommander::ThrusterCommander() : 
     mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), 
-    mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>("127.0.0.1", 6969))
+    mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort))
 {
     mMatrixOfThrustDirCombinations << 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 0, 0, 0, 1, 1, 1, -1, 1, -1, -1, -1, 0,
-			0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
-			0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, -1, 1, -1, 0;
+			                          0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
+			                          0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, -1, 1, -1, 0;
 }
 
 ThrusterCommander::~ThrusterCommander()
@@ -55,6 +55,7 @@ Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aContro
 
     }
 
+    LOGW << "ThrustDir" << thrustDir; 
     return thrustDir;
 }
 

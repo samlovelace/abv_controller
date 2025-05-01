@@ -66,7 +66,7 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server = parseSocket(networkNode["Server"]);
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local = parseSocket(networkNode["Local"]);
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Multicast = parseSocket(networkNode["Multicast"]);
-    mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Arduino = parseSocket(networkNode["Arduino"]);
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.arduino = parseSocket(networkNode["Arduino"]);
 
     YAML::Node stateTrackerNode = config["StateTracker"]; 
     mConfigurations.vehicleConfig.stateTrackerConfig.mInterface = stateTrackerNode["Interface"].as<std::string>(); 

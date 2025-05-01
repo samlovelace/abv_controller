@@ -5,7 +5,7 @@
 #include "plog/Log.h"
 #include <thread>
 
-VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig())
+VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), mCurrentState(Eigen::VectorXd::Zero(6))
 {
     FetcherType typeToMake = toEnum(mConfig.mInterface); 
 

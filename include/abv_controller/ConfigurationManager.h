@@ -1,10 +1,8 @@
 #ifndef CONFIGURATIONMANAGER_H
 #define CONFIGURATIONMANAGER_H
 
-#include <tinyxml2.h>
 #include "Configurations.h"
 
-using namespace tinyxml2;
 
 class ConfigurationManager
 {
