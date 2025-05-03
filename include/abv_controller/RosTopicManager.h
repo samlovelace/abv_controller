@@ -51,7 +51,10 @@ public:
             } 
             else 
             {
-                RCLCPP_ERROR(this->get_logger(), "Failed to cast publisher for topic: %s", topicName.c_str());
+                if(rclcpp::ok())
+                {
+                    RCLCPP_ERROR(this->get_logger(), "Failed to cast publisher for topic: %s", topicName.c_str());
+                }
             }
         } 
         else 
