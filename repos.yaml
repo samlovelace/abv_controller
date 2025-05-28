@@ -6,7 +6,7 @@ repositories:
   abv_communications:
     type: git
     url: https://github.com/samlovelace/abv_communications.git
-    version: ignition-fortress
+    version: main
   abv_docker:
     type: git
     url: https://github.com/samlovelace/abv_docker.git
