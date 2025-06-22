@@ -41,7 +41,15 @@ chmod +x clone.sh
 ./clone.sh
 ```
 
-Confirm that the required repositories were installed alongside the abv_controller repository in the src directory of the workspace.
+Confirm that the required repositories were installed alongside the abv_controller repository in the src directory of the workspace. The folder structure should look like this
+
+- abv_ws
+  - src
+    - abv_controller
+    - abv_idl
+    - abv_teleop
+    - abv_communications
+    - abv_docker
 
 ## Compile
 
