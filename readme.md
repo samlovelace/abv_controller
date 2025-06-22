@@ -13,8 +13,9 @@ sudo apt install -y \
     cmake \
     libeigen3-dev \
     libyaml-cpp-dev \
-    ros-humble-rclcpp \
-    ros-humble-ament-cmake
+    ros-humble-desktop \
+    python3-colcon-common-extensions \
+    libsfml-dev
 ```
 
 ## Workspace
