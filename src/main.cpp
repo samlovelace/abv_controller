@@ -7,22 +7,6 @@
 #include "abv_controller/ConfigurationManager.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
-// Signal handler function
-void signalHandler(int signal) {
-
-    LOGD  << "\n" << R"(
-    _________________________
-    |                       |
-    |   SHUTTING DOWN...    |
-    |_______________________|
-            \   ^__^
-             \  (oo)\_______
-                (__)\       )\/\
-                    ||----w |
-                    ||     ||)";
-    exit(0); // Exit the program
-}
-
 int main()
 {
     std::signal(SIGINT, signalHandler); 
