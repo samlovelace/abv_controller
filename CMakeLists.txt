@@ -67,6 +67,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/include
   ${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
   /usr/include
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 if(USE_NATNET)
