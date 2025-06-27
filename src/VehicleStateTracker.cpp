@@ -1,6 +1,15 @@
 
 #include "abv_controller/VehicleStateTracker.h"
-#include "abv_controller/OptitrackStateFetcher.h"
+
+
+#ifdef USE_NATNET
+#include "abv_controller/OptitrackStateFetcher_NatNet.h"
+using OptitrackStateFetcher = OptitrackStateFetcher_NatNet;
+#else
+#include "abv_controller/OptitrackStateFetcher_LibMocap.h"
+using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap;
+#endif
+
 #include "abv_controller/SimulatedStateFetcher.h"
 #include "plog/Log.h"
 #include <thread>

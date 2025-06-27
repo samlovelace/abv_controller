@@ -1,19 +1,19 @@
 
-#include "abv_controller/OptitrackStateFetcher.h"
+#include "abv_controller/OptitrackStateFetcher_NatNet.h"
 #include "plog/Log.h"
 
-OptitrackStateFetcher::OptitrackStateFetcher(NetworkConfig aConfig) : 
+OptitrackStateFetcher_NatNet::OptitrackStateFetcher_NatNet(NetworkConfig aConfig) : 
         mNatNetClient(nullptr), mConfig(aConfig), mID(1)
 {
 
 }
 
-OptitrackStateFetcher::~OptitrackStateFetcher()
+OptitrackStateFetcher_NatNet::~OptitrackStateFetcher_NatNet()
 {
     
 }
 
-bool OptitrackStateFetcher::init() 
+bool OptitrackStateFetcher_NatNet::init() 
 {
     if(mNatNetClient)
     {
@@ -28,7 +28,7 @@ bool OptitrackStateFetcher::init()
         [](sFrameOfMocapData* data, void* pUserContext) {
             if (pUserContext) {
                 // Convert the user context pointer back to an instance of OptitrackStateFetcher
-                static_cast<OptitrackStateFetcher*>(pUserContext)->frameRecvdCallback(data, pUserContext);
+                static_cast<OptitrackStateFetcher_NatNet*>(pUserContext)->frameRecvdCallback(data, pUserContext);
             }
         },
         this  // Pass the current instance as the user context
@@ -58,14 +58,14 @@ bool OptitrackStateFetcher::init()
     return true; 
 }
 
-Eigen::Matrix<double, 6, 1> OptitrackStateFetcher::fetchState()
+Eigen::Matrix<double, 6, 1> OptitrackStateFetcher_NatNet::fetchState()
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     return mLatestState; 
 }
 
 
-void OptitrackStateFetcher::frameRecvdCallback(sFrameOfMocapData* data, void* pUserData)
+void OptitrackStateFetcher_NatNet::frameRecvdCallback(sFrameOfMocapData* data, void* pUserData)
 {
     //TODO: put the robot's optitrack ID in a config file
     for(size_t i = 0; i < data->nRigidBodies; i++)
@@ -96,7 +96,7 @@ void OptitrackStateFetcher::frameRecvdCallback(sFrameOfMocapData* data, void* pU
     }
 }
 
-void OptitrackStateFetcher::printConnectionInfo()
+void OptitrackStateFetcher_NatNet::printConnectionInfo()
 {
     // Print version info
     unsigned char ver[4];

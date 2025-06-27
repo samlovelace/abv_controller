@@ -1,56 +1,112 @@
 cmake_minimum_required(VERSION 3.8)
 project(abv_controller)
 
+# Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# use ORIGIN so executable looks for .so files in same folder
+# Shared library lookup behavior
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "$ORIGIN")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-# find dependencies
+# Packages
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp)
-find_package(abv_idl)
+find_package(rclcpp REQUIRED)
+find_package(abv_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
 
+option(ARCH_TEST "Force-disable NatNet regardless of architecture" OFF)
 
+# Architecture detection
+set(USE_NATNET FALSE)
+if(NOT ARCH_TEST AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(USE_NATNET TRUE)
+  add_definitions(-DUSE_NATNET)
+  message(STATUS "Architecture is x86_64, NatNet SDK will be included.")
+else()
+  message(STATUS "Using libmotioncapture for OptiTrack support")
+
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
+  add_subdirectory(dependencies/libmotioncapture)
+  set(USE_LIBMOCAP TRUE)
+  add_definitions(-DUSE_LIBMOCAP)
+endif()
+
+# Source files (common)
 set(ABV_CONTROLLER_SOURCES 
-    ${CMAKE_CURRENT_LIST_DIR}/src/CommandHandler.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/ConfigurationManager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/Controller.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/main.cpp 
-    ${CMAKE_CURRENT_LIST_DIR}/src/OptitrackStateFetcher.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/RosStatePublisher.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/RosTopicManager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/SimulatedStateFetcher.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/StateMachine.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/ThrusterCommander.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/UdpClient.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/Vehicle.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/VehicleStateTracker.cpp
+  src/CommandHandler.cpp
+  src/ConfigurationManager.cpp
+  src/Controller.cpp
+  src/main.cpp 
+  src/RosStatePublisher.cpp
+  src/RosTopicManager.cpp
+  src/SimulatedStateFetcher.cpp
+  src/StateMachine.cpp
+  src/ThrusterCommander.cpp
+  src/UdpClient.cpp
+  src/Vehicle.cpp
+  src/VehicleStateTracker.cpp
 )
 
+# Conditionally include NatNet-dependent source
+if(USE_NATNET)
+  list(APPEND ABV_CONTROLLER_SOURCES src/OptitrackStateFetcher_NatNet.cpp)
+endif()
+if(USE_LIBMOCAP)
+    list(APPEND ABV_CONTROLLER_SOURCES src/OptitrackStateFetcher_LibMocap.cpp)
+endif()
+
+# Create executable
 add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
 
-include_directories(${PROJECT_NAME} 
-  ${CMAKE_CURRENT_LIST_DIR}/include 
+# Include directories
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/include
   ${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
-  ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/include
   /usr/include
-
 )
 
-ament_target_dependencies(${PROJECT_NAME} rclcpp abv_idl Eigen3)
-target_link_libraries(${PROJECT_NAME} yaml-cpp ${NATNET_LIB}) 
+if(USE_NATNET)
+  target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/include
+  )
+endif()
 
-# Install the executable
+if(USE_LIBMOCAP)
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmotioncapture/include
+    )
+endif()
+
+# Dependencies
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  abv_idl
+  Eigen3
+)
+
+# Link libraries
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
+
+if(USE_NATNET)
+  find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
+  if(NATNET_LIB)
+    target_link_libraries(${PROJECT_NAME} ${NATNET_LIB})
+    install(FILES dependencies/NatNetSDK4.1/lib/libNatNet.so DESTINATION lib/${PROJECT_NAME})
+  else()
+    message(FATAL_ERROR "NatNet library not found but USE_NATNET is TRUE.")
+  endif()
+endif()
+
+if(USE_LIBMOCAP)
+    target_link_libraries(${PROJECT_NAME} libmotioncapture)
+endif()
+
+# Install
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
-install(FILES dependencies/NatNetSDK4.1/lib/libNatNet.so DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
