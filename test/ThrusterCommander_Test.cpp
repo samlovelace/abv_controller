@@ -23,8 +23,18 @@ TEST_F(ThrusterCommander_Test, ConvertToThrustVector_Test)
 {
     Eigen::Vector3d input = {2.5, 0, 0}; 
     Eigen::Vector3i thrustVector = convertToThrustVector(input); 
-    Eigen::Vector3i properVector = {1, 0, 0}; 
-    ASSERT_EQ(properVector, thrustVector); 
+    Eigen::Vector3i correct = {1, 0, 0}; 
+    ASSERT_EQ(correct, thrustVector); 
+
+    input = {0, 2.5, 0}; 
+    thrustVector = convertToThrustVector(input); 
+    correct = {0, 1, 0}; 
+    ASSERT_EQ(correct, thrustVector); 
+
+    input = {0, 0, 2.5}; 
+    thrustVector = convertToThrustVector(input); 
+    correct = {0, 0, 1}; 
+    ASSERT_EQ(correct, thrustVector); 
 }
 
 
