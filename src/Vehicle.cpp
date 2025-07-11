@@ -5,7 +5,7 @@
 
 
 Vehicle::Vehicle(/* args */) : 
-    mThrusterCommander(std::make_unique<ThrusterCommander>()), mStateTracker(std::make_shared<VehicleStateTracker>()),
+    mStateTracker(std::make_shared<VehicleStateTracker>()),
     mStatePublisher(std::make_unique<RosStatePublisher>(mStateTracker)),mController(std::make_unique<Controller>()),
     mLastInputRecvdAt(std::chrono::steady_clock::now()),mStaleInputThreshold(std::chrono::duration<double>(std::chrono::milliseconds(500)))
 {
@@ -13,6 +13,12 @@ Vehicle::Vehicle(/* args */) :
 
 Vehicle::~Vehicle()
 {
+}
+
+bool Vehicle::init()
+{
+    mThrusterCommander = std::make_unique<ThrusterCommander>();
+    mThrusterCommander->init(); 
 }
 
 void Vehicle::doThrusterControl()

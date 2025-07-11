@@ -15,6 +15,8 @@ public:
     Vehicle();
     ~Vehicle();
 
+    bool init(); 
+
     void doThrusterControl(); 
     void doPoseControl(); 
     void doVelocityControl(); 

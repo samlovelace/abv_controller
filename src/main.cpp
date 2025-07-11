@@ -21,7 +21,10 @@ int main()
     }
     
     rclcpp::init(0, nullptr);
+    
     std::shared_ptr<Vehicle> abv = std::make_shared<Vehicle>(); 
+    abv->init(); 
+
     std::shared_ptr<StateMachine> msm = std::make_shared<StateMachine>(abv);
     std::unique_ptr<CommandHandler> cmdHandler = std::make_unique<CommandHandler>(msm, abv); 
 

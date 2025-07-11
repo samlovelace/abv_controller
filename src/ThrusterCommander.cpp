@@ -1,10 +1,9 @@
 
 #include "abv_controller/ThrusterCommander.h"
-#include "plog/Log.h"
 
 ThrusterCommander::ThrusterCommander() : 
     mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), 
-    mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort))
+    mThrusterCommand("900000000")
 {
     mMatrixOfThrustDirCombinations << 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 0, 0, 0, 1, 1, 1, -1, 1, -1, -1, -1, 0,
 			                          0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
@@ -13,6 +12,11 @@ ThrusterCommander::ThrusterCommander() :
 
 ThrusterCommander::~ThrusterCommander()
 {
+}
+
+bool ThrusterCommander::init()
+{
+    mUdpClient = std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort);
 }
 
 void ThrusterCommander::commandThrusters(Eigen::Vector3d aControlInput)
@@ -55,7 +59,7 @@ Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aContro
 
     }
 
-    LOGW << "ThrustDir" << thrustDir; 
+    //LOGW << "ThrustDir" << thrustDir; 
     return thrustDir;
 }
 

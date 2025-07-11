@@ -5,7 +5,6 @@
 #include <vector>
 #include <eigen3/Eigen/Dense>
 #include <yaml-cpp/yaml.h>
-#include <plog/Log.h>
 
 struct StateMachineConfig {
     std::string mControlMode;
