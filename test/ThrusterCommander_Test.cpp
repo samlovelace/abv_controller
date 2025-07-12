@@ -19,6 +19,7 @@ protected:
 };
 
 
+// TODO: add more cases 
 TEST_F(ThrusterCommander_Test, ConvertToThrustVector_Test)
 {
     std::vector<Eigen::Vector3d> inputs = {
@@ -44,6 +45,36 @@ TEST_F(ThrusterCommander_Test, ConvertToThrustVector_Test)
         auto output = convertToThrustVector(inputs[i]); 
 
         ASSERT_EQ(output,outputs[i]); 
+    }
+
+}
+
+// TODO: add rest of cases to test 
+TEST_F(ThrusterCommander_Test, ThrusterCommand_Test)
+{
+    std::vector<Eigen::Vector3i> outputs = {
+        {1, 0, 0}, 
+        {0, 1, 0}, 
+        {0, 0, 1}, 
+        {0, 0, -1},
+        {0, -1, 0},
+        {-1, 0, 0} 
+    };
+
+    std::vector<std::string> commands = {
+        "900000011",
+        "911000000",
+        "901000100",
+        "910001000", 
+        "900001100", 
+        "900110000"
+    }; 
+
+    for(int i =0; i < outputs.size(); i++)
+    {
+        determineThrusterCommand(outputs[i]); 
+
+        ASSERT_EQ(mThrusterCommand, commands[i]); 
     }
 
 }
