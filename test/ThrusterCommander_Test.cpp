@@ -21,20 +21,31 @@ protected:
 
 TEST_F(ThrusterCommander_Test, ConvertToThrustVector_Test)
 {
-    Eigen::Vector3d input = {2.5, 0, 0}; 
-    Eigen::Vector3i thrustVector = convertToThrustVector(input); 
-    Eigen::Vector3i correct = {1, 0, 0}; 
-    ASSERT_EQ(correct, thrustVector); 
+    std::vector<Eigen::Vector3d> inputs = {
+        {2.5, 0, 0}, 
+        {0, 2.5, 0}, 
+        {0, 0, 2.5}, 
+        {0, 0, -2.5},
+        {0, -2.5, 0},
+        {-2.5, 0, 0} 
+    }; 
+    
+    std::vector<Eigen::Vector3i> outputs = {
+        {1, 0, 0}, 
+        {0, 1, 0}, 
+        {0, 0, 1}, 
+        {0, 0, -1},
+        {0, -1, 0},
+        {-1, 0, 0} 
+    };
 
-    input = {0, 2.5, 0}; 
-    thrustVector = convertToThrustVector(input); 
-    correct = {0, 1, 0}; 
-    ASSERT_EQ(correct, thrustVector); 
+    for (int i = 0; i < inputs.size(); i++)
+    { 
+        auto output = convertToThrustVector(inputs[i]); 
 
-    input = {0, 0, 2.5}; 
-    thrustVector = convertToThrustVector(input); 
-    correct = {0, 0, 1}; 
-    ASSERT_EQ(correct, thrustVector); 
+        ASSERT_EQ(output,outputs[i]); 
+    }
+
 }
 
 
