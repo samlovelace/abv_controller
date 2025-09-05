@@ -22,6 +22,9 @@ Thrusters:
     On: 0.2
     Off: 0.09
 
+GPIO: 
+  pins: [7, 12]
+
 Network:
   Arduino:
     Ip: 192.168.2.18

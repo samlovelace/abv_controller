@@ -40,6 +40,7 @@ set(ABV_CONTROLLER_SOURCES
   src/CommandHandler.cpp
   src/ConfigurationManager.cpp
   src/Controller.cpp
+  src/GpioHandler.cpp
   src/main.cpp 
   src/RosStatePublisher.cpp
   src/RosTopicManager.cpp
@@ -66,7 +67,7 @@ add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/include
   ${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
-  /usr/include
+  ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2
   ${EIGEN3_INCLUDE_DIRS}
 )
 
@@ -89,8 +90,11 @@ ament_target_dependencies(${PROJECT_NAME}
   Eigen3
 )
 
+# manually set because it doesnt use cmake 
+set(jetgpio_LIB ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2/libjetgpio.so)
+
 # Link libraries
-target_link_libraries(${PROJECT_NAME} yaml-cpp)
+target_link_libraries(${PROJECT_NAME} yaml-cpp ${jetgpio_LIB})
 
 if(USE_NATNET)
   find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)

@@ -6,6 +6,11 @@ ThrusterCommander::ThrusterCommander() :
     mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), 
     mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort))
 {
+
+    // TODO: setup better config to switch between UDP and gpio OR dont support UDP at all? 
+    mGpioHandler = std::make_unique<GpioHandler>(mConfig.pins); 
+    mGpioHandler->init(); 
+
     mMatrixOfThrustDirCombinations << 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 0, 0, 0, 1, 1, 1, -1, 1, -1, -1, -1, 0,
 			                          0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
 			                          0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, -1, 1, -1, 0;
@@ -13,6 +18,7 @@ ThrusterCommander::ThrusterCommander() :
 
 ThrusterCommander::~ThrusterCommander()
 {
+
 }
 
 void ThrusterCommander::commandThrusters(Eigen::Vector3d aControlInput)
@@ -59,14 +65,22 @@ Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aContro
     return thrustDir;
 }
 
+
 void ThrusterCommander::determineThrusterCommand(Eigen::Vector3i aThrustDir)
 {
     std::lock_guard<std::mutex> lock(mThrusterCommandMutex);
+
+    std::vector<int> thrustersToFire;  
 
     // calculate the thruster command sequence based on the control input
     if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 0))) // +x
     {
         mThrusterCommand = "900000011";
+        
+        // determine which pins need to fire to actuate these solenoids 
+        // Ex. 
+        thrustersToFire.push_back(7); 
+        thrustersToFire.push_back(12); 
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 1))) // -x
     {
@@ -171,5 +185,14 @@ void ThrusterCommander::determineThrusterCommand(Eigen::Vector3i aThrustDir)
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 26))) // nothing
     {
         mThrusterCommand = "900000000";
+        
+        //if any pins are on, turn them all off  
+        if(!mGpioHandler->areAllPinsOff())
+        {
+            mGpioHandler->writeAll(0);
+        }
     }
+
+    if(!thrustersToFire.empty())
+        mGpioHandler->writePins(thrustersToFire, 1); 
 }

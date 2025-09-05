@@ -40,6 +40,7 @@ struct ThrusterConfig {
     SocketConfig arduino;
     double uOn;
     double uOff;
+    std::vector<int> pins; 
 };
 
 struct ControllerConfig {
@@ -82,6 +83,23 @@ namespace ConfigUtils
 
         return vec;
     }
+
+    static std::vector<int> parseIntVector(const YAML::Node& node)
+    {
+        if (!node || !node.IsSequence()) {
+            throw std::runtime_error("Invalid int vector format in YAML.");
+        }
+
+        std::vector<int> vec;
+        vec.reserve(node.size());  // Optional, improves efficiency
+
+        for (const auto& element : node) {
+            vec.push_back(element.as<int>());
+        }
+
+        return vec;
+    }
+
 }
 
 #endif // CONFIGURATIONS_H

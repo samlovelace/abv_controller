@@ -17,6 +17,7 @@
 
   <depend>rclcpp</depend>
   <depend>abv_idl</depend>
+  <depend>rcl_interfaces</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

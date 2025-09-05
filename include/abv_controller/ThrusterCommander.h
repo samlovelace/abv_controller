@@ -5,6 +5,7 @@
 #include "abv_controller/Configurations.h"
 #include "abv_controller/ConfigurationManager.h"
 #include "abv_controller/UdpClient.h"
+#include "abv_controller/GpioHandler.h"
 
 #include <mutex> 
 #include <memory>
@@ -27,6 +28,8 @@ private:
     Eigen::Matrix<int, 3, 27> mMatrixOfThrustDirCombinations; 
 
     std::unique_ptr<UdpClient> mUdpClient; 
+
+    std::unique_ptr<GpioHandler> mGpioHandler; 
 
 };
 

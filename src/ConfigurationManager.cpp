@@ -53,6 +53,9 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOn = thrusterNode["On"].as<double>();
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOff = thrusterNode["Off"].as<double>();
 
+    YAML::Node gpioNode = config["GPIO"]; 
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.pins = ConfigUtils::parseIntVector(gpioNode["pins"]);
+
     // Parse Network Configuration
     auto parseSocket = [](const YAML::Node& node) -> SocketConfig {
         return {
