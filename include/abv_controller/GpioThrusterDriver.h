@@ -1,27 +1,42 @@
 #ifndef GPIOHANDLER_H
 #define GPIOHANDLER_H   
 
+#include "IThrusterDriver.hpp"
+
 #include <jetgpio.h>
 #include <stdexcept>
 #include <unistd.h>
 #include <vector> 
 #include <array>
+#include <bitset>
 
-class GpioHandler
+class GpioThrusterDriver : public IThrusterDriver
 {
 public:
-    GpioHandler(std::vector<int> aSetOfOutputPins);
-    ~GpioHandler();
+    GpioThrusterDriver(std::vector<int> aSetOfOutputPins);
+    ~GpioThrusterDriver() override; 
 
-    bool init(); 
-    bool fini(); 
+    bool init() override; 
+    bool fini() override; 
+
+    bool send(const std::string& aThrusterCommand) override; 
+
+private:
+
+    std::vector<int> mOutputPins; 
+
+    bool isOutputPin(int aPin); 
 
     /**
      * @brief writeAll actuates all output pins (specified in mOutputPins) to the desired state
      * 
      * @param aState the state to actuate all output pins to. 1 = ON/HIGH, 0 = OFF/LOW
      */
-    void writeAll(const int aState);
+    void writeAll(const int aState); 
+
+    void writePin(int aPin, int aState); 
+    
+    void writePins(std::bitset<8>); 
 
     /**
      * @brief areAllPinsOff checks if all output pins (specified in mOutputPins) are off
@@ -30,16 +45,6 @@ public:
      *       trying to toggle pins off that are already off
      */
     bool areAllPinsOff();
-
-    void writePin(int aPin, int aState);
-    
-    void writePins(std::vector<int> aSetOfPins, int aState);
-
-    bool isOutputPin(int aPin); 
-
-private:
-
-    std::vector<int> mOutputPins; 
 
 };
 

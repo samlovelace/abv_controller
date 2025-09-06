@@ -1,19 +1,20 @@
 
-#include "abv_controller/GpioHandler.h"
+#include "abv_controller/GpioThrusterDriver.h"
 #include "plog/Log.h"
 #include <algorithm>
 
-GpioHandler::GpioHandler(std::vector<int> aSetOfOutputPins) : mOutputPins(aSetOfOutputPins)
+GpioThrusterDriver::GpioThrusterDriver(std::vector<int> aSetOfOutputPins) : mOutputPins(aSetOfOutputPins)
 {
+    // do nothing 
 }
 
-GpioHandler::~GpioHandler()
+GpioThrusterDriver::~GpioThrusterDriver()
 {
     writeAll(0); 
     gpioTerminate(); 
 }
 
-bool GpioHandler::init()
+bool GpioThrusterDriver::init()
 {
     if(-1 == gpioInitialise())
     {
@@ -37,16 +38,21 @@ bool GpioHandler::init()
     LOGD << "Initialized all output pins successfully"; 
     
     // Other setup stuff here 
-
     return true; 
 }
 
-bool GpioHandler::fini()
+bool GpioThrusterDriver::fini()
 {
     gpioTerminate(); 
 }
 
-bool GpioHandler::areAllPinsOff()
+bool GpioThrusterDriver::send(const std::string& aThrusterCommand)
+{
+    std::bitset<8> command(aThrusterCommand);
+    writePins(command); 
+}
+
+bool GpioThrusterDriver::areAllPinsOff()
 {
     for(const auto& pin : mOutputPins)
     {
@@ -60,30 +66,29 @@ bool GpioHandler::areAllPinsOff()
     return true; 
 }
 
-void GpioHandler::writeAll(const int aState)
+void GpioThrusterDriver::writeAll(const int aState)
 {
     for(const auto& pin : mOutputPins)
     {
-        // skipping isOutputPin check since we are looping through mOutputPins
-        gpioWrite(pin, aState); 
+        gpioWrite(pin, aState);         // skipping isOutputPin check since we are looping through mOutputPins 
     }
 }
 
-void GpioHandler::writePin(int aPin, int aState)
+void GpioThrusterDriver::writePin(int aPin, int aState)
 {
     if(isOutputPin(aPin))
         gpioWrite(aPin, aState); 
 }
 
-void GpioHandler::writePins(std::vector<int> aSetOfPins, int aState)
+void GpioThrusterDriver::writePins(std::bitset<8> aThrustCommand)
 {
-    for(const auto& pin : aSetOfPins)
+    for(int i = 0; i < 8; i++)
     {
-        writePin(pin, aState); 
+        gpioWrite(mOutputPins[i], aThrustCommand[i]);       // skipping isOutputPin check since we are directly using mOutputPins 
     }
 }
 
-bool GpioHandler::isOutputPin(int aPin) 
+bool GpioThrusterDriver::isOutputPin(int aPin) 
 {
     return std::find(mOutputPins.begin(), mOutputPins.end(), aPin) != mOutputPins.end();
 }

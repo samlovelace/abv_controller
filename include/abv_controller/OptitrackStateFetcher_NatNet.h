@@ -3,7 +3,7 @@
 
 #include "IStateFetcher.h"
 
-#ifdef USE_NATNET
+#ifdef ARCH_X86
 #include "NatNetTypes.h"
 #include "NatNetClient.h"
 #include "NatNetCAPI.h"
@@ -26,7 +26,7 @@ public:
 
 private:
     
-    #ifdef USE_NATNET
+    #ifdef ARCH_X86
     std::unique_ptr<NatNetClient> mNatNetClient;
     // callback function when frame is recvd
     void frameRecvdCallback(sFrameOfMocapData* data, void* pUserData);

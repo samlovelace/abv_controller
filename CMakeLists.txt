@@ -6,6 +6,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+option(ARCH_TEST "Force-disable NatNet regardless of architecture" OFF)
+
 # Shared library lookup behavior
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "$ORIGIN")
@@ -18,21 +20,25 @@ find_package(abv_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-option(ARCH_TEST "Force-disable NatNet regardless of architecture" OFF)
-
 # Architecture detection
-set(USE_NATNET FALSE)
-if(NOT ARCH_TEST AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  set(USE_NATNET TRUE)
-  add_definitions(-DUSE_NATNET)
+set(ARCH_X86 FALSE)
+set(ARCH_ARM FALSE)
+
+if(NOT ARCH_TEST AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+  
+  set(ARCH_X86 TRUE)
+  add_definitions(-DARCH_X86)
   message(STATUS "Architecture is x86_64, NatNet SDK will be included.")
-else()
+
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+  
   message(STATUS "Using libmotioncapture for OptiTrack support")
 
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
   add_subdirectory(dependencies/libmotioncapture)
-  set(USE_LIBMOCAP TRUE)
-  add_definitions(-DUSE_LIBMOCAP)
+  set(ARCH_ARM TRUE)
+  add_definitions(-DARCH_ARM)
+
 endif()
 
 # Source files (common)
@@ -40,7 +46,6 @@ set(ABV_CONTROLLER_SOURCES
   src/CommandHandler.cpp
   src/ConfigurationManager.cpp
   src/Controller.cpp
-  src/GpioHandler.cpp
   src/main.cpp 
   src/RosStatePublisher.cpp
   src/RosTopicManager.cpp
@@ -52,12 +57,15 @@ set(ABV_CONTROLLER_SOURCES
   src/VehicleStateTracker.cpp
 )
 
-# Conditionally include NatNet-dependent source
-if(USE_NATNET)
-  list(APPEND ABV_CONTROLLER_SOURCES src/OptitrackStateFetcher_NatNet.cpp)
-endif()
-if(USE_LIBMOCAP)
-    list(APPEND ABV_CONTROLLER_SOURCES src/OptitrackStateFetcher_LibMocap.cpp)
+# Conditionally include architecture dependent sources
+if(ARCH_X86)
+  list(APPEND ABV_CONTROLLER_SOURCES 
+  	src/OptitrackStateFetcher_NatNet.cpp
+	src/DummyThrusterDriver.cpp)
+elseif(ARCH_ARM)
+	list(APPEND ABV_CONTROLLER_SOURCES 
+		src/OptitrackStateFetcher_LibMocap.cpp
+		src/GpioThrusterDriver.cpp)
 endif()
 
 # Create executable
@@ -67,20 +75,16 @@ add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/include
   ${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
-  ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2
   ${EIGEN3_INCLUDE_DIRS}
 )
 
-if(USE_NATNET)
-  target_include_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/include
-  )
-endif()
-
-if(USE_LIBMOCAP)
-    target_include_directories(${PROJECT_NAME} PRIVATE
+if(ARCH_X86)
+	target_include_directories(${PROJECT_NAME} PRIVATE
+		${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/include)
+elseif(ARCH_ARM)
+	target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmotioncapture/include
-    )
+		${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2)
 endif()
 
 # Dependencies
@@ -90,24 +94,25 @@ ament_target_dependencies(${PROJECT_NAME}
   Eigen3
 )
 
-# manually set because it doesnt use cmake 
-set(jetgpio_LIB ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2/libjetgpio.so)
-
 # Link libraries
-target_link_libraries(${PROJECT_NAME} yaml-cpp ${jetgpio_LIB})
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
-if(USE_NATNET)
-  find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
-  if(NATNET_LIB)
-    target_link_libraries(${PROJECT_NAME} ${NATNET_LIB})
-    install(FILES dependencies/NatNetSDK4.1/lib/libNatNet.so DESTINATION lib/${PROJECT_NAME})
-  else()
-    message(FATAL_ERROR "NatNet library not found but USE_NATNET is TRUE.")
-  endif()
+if(ARCH_X86)
+
+	find_library(NATNET_LIB NatNet PATHS ${CMAKE_CURRENT_LIST_DIR}/dependencies/NatNetSDK4.1/lib)
+	
+	if(NATNET_LIB)
+		target_link_libraries(${PROJECT_NAME} ${NATNET_LIB})
+		install(FILES dependencies/NatNetSDK4.1/lib/libNatNet.so DESTINATION lib/${PROJECT_NAME})
+	else()
+		message(FATAL_ERROR "NatNet library not found but USE_NATNET is TRUE.")
 endif()
 
-if(USE_LIBMOCAP)
-    target_link_libraries(${PROJECT_NAME} libmotioncapture)
+elseif(ARCH_ARM)
+	# manually set because it doesnt use cmake 
+	set(jetgpio_LIB ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2/libjetgpio.so)
+    target_link_libraries(${PROJECT_NAME} libmotioncapture ${jetgpio_LIB})
+	install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/JETGPIO-1.2/libjetgpio.so DESTINATION lib/${PROJECT_NAME})
 endif()
 
 # Install

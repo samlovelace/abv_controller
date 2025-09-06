@@ -5,7 +5,7 @@
 #include "abv_controller/Configurations.h"
 #include "abv_controller/ConfigurationManager.h"
 #include "abv_controller/UdpClient.h"
-#include "abv_controller/GpioHandler.h"
+#include "abv_controller/IThrusterDriver.hpp"
 
 #include <mutex> 
 #include <memory>
@@ -29,7 +29,7 @@ private:
 
     std::unique_ptr<UdpClient> mUdpClient; 
 
-    std::unique_ptr<GpioHandler> mGpioHandler; 
+    std::unique_ptr<IThrusterDriver> mThrusterDriver; 
 
 };
 

@@ -2,14 +2,22 @@
 #include "abv_controller/ThrusterCommander.h"
 #include "plog/Log.h"
 
-ThrusterCommander::ThrusterCommander() : 
-    mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), 
-    mThrusterCommand("900000000"), mUdpClient(std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort))
-{
+#if defined(ARCH_X86)
+    #include "abv_controller/DummyThrusterDriver.h"
+    using ThrusterDriverImpl = DummyThrusterDriver;
+#elif defined(ARCH_ARM)
+    #include "abv_controller/GpioThrusterDriver.h"
+    using ThrusterDriverImpl = GpioThrusterDriver;
+#else
+    #error "Unsupported architecture. Define ARCH_X86 or ARCH_ARM."
+#endif
 
-    // TODO: setup better config to switch between UDP and gpio OR dont support UDP at all? 
-    mGpioHandler = std::make_unique<GpioHandler>(mConfig.pins); 
-    mGpioHandler->init(); 
+
+ThrusterCommander::ThrusterCommander() : 
+    mConfig(ConfigurationManager::getInstance()->getThrusterConfig()), mThrusterCommand("00000000"), 
+    mThrusterDriver(std::make_unique<ThrusterDriverImpl>(mConfig.mGpioPins))
+{
+    mThrusterDriver->init(); 
 
     mMatrixOfThrustDirCombinations << 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, -1, 0, 0, 0, 0, 1, 1, 1, -1, 1, -1, -1, -1, 0,
 			                          0, 0, 1, -1, 0, 0, 1, -1, 1, -1, 0, 0, 0, 0, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, -1, -1, 0,
@@ -29,9 +37,8 @@ void ThrusterCommander::commandThrusters(Eigen::Vector3d aControlInput)
     // convert thrust dir vector into thruster combination 
     determineThrusterCommand(thrustDirVector); 
 
-    // send to thrusters via UDP
-    mUdpClient->send(mThrusterCommand); 
-} 
+    mThrusterDriver->send(mThrusterCommand); 
+}
 
 Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aControlInput)
 {
@@ -70,129 +77,124 @@ void ThrusterCommander::determineThrusterCommand(Eigen::Vector3i aThrustDir)
 {
     std::lock_guard<std::mutex> lock(mThrusterCommandMutex);
 
-    std::vector<int> thrustersToFire;  
-
     // calculate the thruster command sequence based on the control input
     if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 0))) // +x
     {
-        mThrusterCommand = "900000011";
-        
-        // determine which pins need to fire to actuate these solenoids 
-        // Ex. 
-        thrustersToFire.push_back(7); 
-        thrustersToFire.push_back(12); 
+        mThrusterCommand = "00000011";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 1))) // -x
     {
-        mThrusterCommand = "900110000";
+        mThrusterCommand = "00110000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 2))) // +y
     {
-        mThrusterCommand = "911000000";
+        mThrusterCommand = "11000000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 3))) // -y
     {
-        mThrusterCommand = "900001100";
+        mThrusterCommand = "00001100";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 4))) // +phi
     {					
-        mThrusterCommand = "901000100";
+        mThrusterCommand = "01000100";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 5))) // -phi
     {
-        mThrusterCommand = "910001000";
+        mThrusterCommand = "10001000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 6))) // +x +y
     {
-        mThrusterCommand = "901000010";
+        mThrusterCommand = "01000010";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 7))) // +x -y
     {
-        mThrusterCommand = "900001001";
+        mThrusterCommand = "00001001";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 8))) // -x +y
     {
-        mThrusterCommand = "910010000";
+        mThrusterCommand = "10010000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 9))) // -x -y
     {
-        mThrusterCommand = "900100100";
+        mThrusterCommand = "00100100";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 10))) // +x +phi
     {
-        mThrusterCommand = "900000001";
+        mThrusterCommand = "00000001";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 11))) // +x -phi
     {
-        mThrusterCommand = "900000010";
+        mThrusterCommand = "00000010";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 12))) // -x +phi
     {
-        mThrusterCommand = "900010000";
+        mThrusterCommand = "00010000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 13))) // -x -phi
     {
-        mThrusterCommand = "900100000";
+        mThrusterCommand = "00100000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 14))) // +y +phi
     {
-        mThrusterCommand = "901000000";
+        mThrusterCommand = "01000000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 15))) // +y -phi
     {
-        mThrusterCommand = "910000000";
+        mThrusterCommand = "10000000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 16))) // -y +phi
     {
-        mThrusterCommand = "900000100";
+        mThrusterCommand = "00000100";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 17))) // -y -phi
     {
-        mThrusterCommand = "900001000";
+        mThrusterCommand = "00001000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 18))) // +x +y +phi
     {
-        mThrusterCommand = "901000001";
+        mThrusterCommand = "01000001";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 19))) // +x +y -phi
     {
-        mThrusterCommand = "910000010";
+        mThrusterCommand = "10000010";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 20))) // +x -y +phi
     {
-        mThrusterCommand = "900000101";
+        mThrusterCommand = "00000101";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 21))) // -x +y +phi
     {
-        mThrusterCommand = "901010000";
+        mThrusterCommand = "01010000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 22))) // +x -y -phi
     {
-        mThrusterCommand = "900001010";
+        mThrusterCommand = "00001010";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 23))) // -x +y -phi
     {
-        mThrusterCommand = "910100000";
+        mThrusterCommand = "10100000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 24))) // -x -y +phi
     {
-        mThrusterCommand = "900010100";
+        mThrusterCommand = "00010100";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 25))) // -x -y -phi
     {
-        mThrusterCommand = "900101000";
+        mThrusterCommand = "00101000";
     }
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 26))) // nothing
     {
-        mThrusterCommand = "900000000";
+        mThrusterCommand = "00000000";
         
-        //if any pins are on, turn them all off  
-        if(!mGpioHandler->areAllPinsOff())
-        {
-            mGpioHandler->writeAll(0);
-        }
+        // //if any pins are on, turn them all off  
+        // if(!mGpioHandler->areAllPinsOff())
+        // {
+        //     mGpioHandler->writeAll(0);
+        // }
     }
 
-    if(!thrustersToFire.empty())
-        mGpioHandler->writePins(thrustersToFire, 1); 
+    // if(!thrustersToFire.empty())
+    // {
+    //     mGpioHandler->writePins(thrustersToFire, 1);
+    // }
 }
