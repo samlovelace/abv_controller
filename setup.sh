@@ -67,7 +67,7 @@ install_ros() {
     echo "[✔] ROS 2 Humble installed and environment sourced."
 }
 
-WS=$0
+WS=$1
 
 # Subtract 2 from total cores
 CORES=$(( $(nproc) - 2 ))
