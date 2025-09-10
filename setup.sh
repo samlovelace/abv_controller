@@ -100,7 +100,6 @@ for pkg in "${DEPENDENCIES[@]}"; do
 done
 
 # Ensure the directory exists
-mkdir -p "$LIB_DIR"
 mkdir -p "$WS"/src
 
 #git clone https://github.com/samlovelace/robot_idl.git "$WS/src/robot_idl"
