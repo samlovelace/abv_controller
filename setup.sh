@@ -67,7 +67,7 @@ install_ros() {
     echo "[✔] ROS 2 Humble installed and environment sourced."
 }
 
-WS="/home/robot_ws"
+WS=$0
 
 # Subtract 2 from total cores
 CORES=$(( $(nproc) - 2 ))
@@ -83,6 +83,8 @@ DEPENDENCIES=(
     cmake
     git
     curl
+    libeigen3-dev
+    libyaml-cpp-dev
 )
 
 # Ensure script is run as root
@@ -100,11 +102,12 @@ for pkg in "${DEPENDENCIES[@]}"; do
 done
 
 # Ensure the directory exists
-mkdir -p "$WS"/src
+#mkdir -p "$WS"/src
 
 #git clone https://github.com/samlovelace/robot_idl.git "$WS/src/robot_idl"
 
 cd "$WS"
+pwd
 source /opt/ros/humble/setup.bash
 colcon build --packages-select robot_idl abv_controller 
 
