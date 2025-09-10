@@ -3,7 +3,7 @@
 
 #include "abv_controller/Configurations.h"
 #include "abv_controller/VehicleStateTracker.h"
-#include "abv_idl/msg/abv_state.hpp"
+#include "robot_idl/msg/abv_state.hpp"
 #include <thread> 
 
 class RosStatePublisher
@@ -23,7 +23,7 @@ private:
     bool mShouldPublishState; 
     std::mutex mShouldPublishStateMutex; 
 
-    abv_idl::msg::AbvState convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector); 
+    robot_idl::msg::AbvState convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector); 
 };
 
 #endif // ROSSTATEPUBLISHER_H

@@ -16,7 +16,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Packages
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(abv_idl REQUIRED)
+find_package(robot_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -90,7 +90,7 @@ endif()
 # Dependencies
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
-  abv_idl
+  robot_idl
   Eigen3
 )
 

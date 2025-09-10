@@ -7,7 +7,7 @@ CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_pt
     mStateMachine(msm), mVehicle(abv)
 {
     auto topicManager = RosTopicManager::getInstance(); 
-    topicManager->createSubscriber<abv_idl::msg::AbvCommand>("abv_command", 
+    topicManager->createSubscriber<robot_idl::msg::AbvCommand>("abv_command", 
                                     std::bind(&CommandHandler::commandCallback, this, std::placeholders::_1)); 
 
     topicManager->spinNode(); 
@@ -23,7 +23,7 @@ CommandHandler::~CommandHandler()
 {
 }
 
-void CommandHandler::commandCallback(abv_idl::msg::AbvCommand::SharedPtr aCmdMsg)
+void CommandHandler::commandCallback(robot_idl::msg::AbvCommand::SharedPtr aCmdMsg)
 {
     if(CommandType::THRUSTER == toEnum(aCmdMsg->type))
     {
@@ -46,7 +46,7 @@ void CommandHandler::commandCallback(abv_idl::msg::AbvCommand::SharedPtr aCmdMsg
     }
 }
 
-Eigen::Vector3d CommandHandler::convertToEigen(abv_idl::msg::AbvVec3 aVectorToConvert)
+Eigen::Vector3d CommandHandler::convertToEigen(robot_idl::msg::AbvVec3 aVectorToConvert)
 {
     Eigen::Vector3d vectorToReturn;
     vectorToReturn[0] = aVectorToConvert.x; 
