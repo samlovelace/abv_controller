@@ -8,7 +8,7 @@
 RosStatePublisher::RosStatePublisher(std::shared_ptr<VehicleStateTracker> aStateTracker) : 
     mStateTracker(aStateTracker), mConfig(ConfigurationManager::getInstance()->getStatePublisherConfig())
 {
-    RosTopicManager::getInstance()->createPublisher<abv_idl::msg::AbvState>("abv_state");
+    RosTopicManager::getInstance()->createPublisher<robot_idl::msg::AbvState>("abv_state");
     mStatePublishThread = std::thread(&RosStatePublisher::publishStateLoop, this); 
 }
 
@@ -53,10 +53,10 @@ void RosStatePublisher::publishStateLoop()
     }
 }
 
-abv_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector)
+robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector)
 {
-    abv_idl::msg::AbvVec3 position; 
-    abv_idl::msg::AbvVec3 velocity;
+    robot_idl::msg::AbvVec3 position; 
+    robot_idl::msg::AbvVec3 velocity;
 
     position.x = aStateVector[0]; 
     position.y = aStateVector[1]; 
@@ -66,7 +66,7 @@ abv_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<double, 
     velocity.y = aStateVector[4]; 
     velocity.yaw = aStateVector[5];  
 
-    abv_idl::msg::AbvState state; 
+    robot_idl::msg::AbvState state; 
     state.set__position(position); 
     state.set__velocity(velocity); 
 

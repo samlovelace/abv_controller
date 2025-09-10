@@ -14,13 +14,13 @@ SimulatedStateFetcher::~SimulatedStateFetcher()
 
 bool SimulatedStateFetcher::init()
 {
-    RosTopicManager::getInstance()->createSubscriber<abv_idl::msg::AbvState>("abv_state_simulated", 
+    RosTopicManager::getInstance()->createSubscriber<robot_idl::msg::AbvState>("abv_state_simulated", 
                                                 std::bind(&SimulatedStateFetcher::stateCallback, this, std::placeholders::_1));
 
     return true; 
 }
 
-void SimulatedStateFetcher::stateCallback(abv_idl::msg::AbvState::SharedPtr aSimState)
+void SimulatedStateFetcher::stateCallback(robot_idl::msg::AbvState::SharedPtr aSimState)
 {
     Eigen::Matrix<double, 6, 1> state; 
     state[0]  = aSimState->position.x;

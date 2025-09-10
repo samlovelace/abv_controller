@@ -2,7 +2,7 @@
 #define COMMANDHANDLER_H
 
 #include "abv_controller/RosTopicManager.h"
-#include "abv_idl/msg/abv_command.hpp"
+#include "robot_idl/msg/abv_command.hpp"
 #include "abv_controller/StateMachine.h"
 #include "abv_controller/Vehicle.h"
 
@@ -24,11 +24,11 @@ public:
         NUM_TYPES
     };
 
-    void commandCallback(abv_idl::msg::AbvCommand::SharedPtr aCmdMsg); 
+    void commandCallback(robot_idl::msg::AbvCommand::SharedPtr aCmdMsg); 
     CommandType toEnum(const std::string& aType); 
     std::string toString(CommandType aCmdType); 
     void setNewActiveState(StateMachine::States aNewState); 
-    Eigen::Vector3d convertToEigen(abv_idl::msg::AbvVec3 aVectorToConvert);
+    Eigen::Vector3d convertToEigen(robot_idl::msg::AbvVec3 aVectorToConvert);
 
 private: 
     std::shared_ptr<StateMachine> mStateMachine;

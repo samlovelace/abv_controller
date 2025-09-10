@@ -2,7 +2,7 @@
 #define SIMULATEDSTATEFETCHER_H 
 
 #include "abv_controller/IStateFetcher.h"
-#include "abv_idl/msg/abv_state.hpp"
+#include "robot_idl/msg/abv_state.hpp"
 
 class SimulatedStateFetcher : public IStateFetcher
 {
@@ -14,7 +14,7 @@ public:
     Eigen::Matrix<double, 6,1> fetchState() override; 
 
 private:
-    void stateCallback(abv_idl::msg::AbvState::SharedPtr aSimState); 
+    void stateCallback(robot_idl::msg::AbvState::SharedPtr aSimState); 
 
     std::mutex mStateMutex; 
     Eigen::Matrix<double, 6, 1> mState; 

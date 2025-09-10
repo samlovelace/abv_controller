@@ -47,7 +47,7 @@ Confirm that the required repositories were installed alongside the abv_controll
 - abv_ws
   - src
     - abv_controller
-    - abv_idl
+    - robot_idl
     - abv_teleop
     - abv_communications
     - abv_docker

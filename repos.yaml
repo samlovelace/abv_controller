@@ -1,7 +1,7 @@
 repositories:
-  abv_idl:
+  robot_idl:
     type: git
-    url: https://github.com/samlovelace/abv_idl.git
+    url: https://github.com/samlovelace/robot_idl.git
     version: main
   abv_communications:
     type: git
@@ -11,12 +11,11 @@ repositories:
     type: git
     url: https://github.com/samlovelace/abv_docker.git
     version: main
-  abv_simulator: 
+  abv_simulator:
     type: git
     url: https://github.com/samlovelace/abv_simulator.git
-    version: main  
-  abv_teleop: 
+    version: main
+  abv_teleop:
     type: git
     url: https://github.com/samlovelace/abv_teleop.git
     version: main
-
