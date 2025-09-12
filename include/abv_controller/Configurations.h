@@ -27,6 +27,7 @@ struct NetworkConfig {
 struct StateTrackerConfig {
     std::string mInterface;
     int mRate;
+    int mRigidBodyId; 
     NetworkConfig mNetwork;
 };
 

@@ -5,9 +5,9 @@
 
 
 Vehicle::Vehicle(/* args */) : 
-    mStateTracker(std::make_shared<VehicleStateTracker>()),
+    mStateTracker(std::make_shared<VehicleStateTracker>(ConfigurationManager::getInstance()->getVehicleConfig().Name)),
     mStatePublisher(std::make_unique<RosStatePublisher>(mStateTracker)),mController(std::make_unique<Controller>()),
-    mLastInputRecvdAt(std::chrono::steady_clock::now()),mStaleInputThreshold(std::chrono::duration<double>(std::chrono::milliseconds(500)))
+    mLastInputRecvdAt(std::chrono::steady_clock::now()), mStaleInputThreshold(std::chrono::duration<double>(std::chrono::milliseconds(500)))
 {
 }
 

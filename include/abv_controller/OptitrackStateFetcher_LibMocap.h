@@ -13,7 +13,7 @@
 class OptitrackStateFetcher_LibMocap : public IStateFetcher
 { 
 public:
-    OptitrackStateFetcher_LibMocap(NetworkConfig aConfig);
+    OptitrackStateFetcher_LibMocap(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName);
     ~OptitrackStateFetcher_LibMocap() override; 
 
     Eigen::Matrix<double, 6, 1> fetchState() override; 
@@ -27,7 +27,8 @@ private:
 
     NetworkConfig mConfig; 
     Eigen::Matrix<double, 6, 1> mLatestState; 
-    int32_t mID; 
+    int mID; 
+    std::string mRigidBodyName; 
 
     std::mutex mStateMutex; 
 

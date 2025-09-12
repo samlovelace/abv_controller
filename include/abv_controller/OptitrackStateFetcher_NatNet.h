@@ -16,7 +16,7 @@
 class OptitrackStateFetcher_NatNet : public IStateFetcher
 {
 public:
-    OptitrackStateFetcher_NatNet(NetworkConfig aConfig);
+    OptitrackStateFetcher_NatNet(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName);
     ~OptitrackStateFetcher_NatNet() override; 
 
     bool init() override; 
@@ -34,7 +34,8 @@ private:
 
     NetworkConfig mConfig; 
     Eigen::Matrix<double, 6, 1> mLatestState; 
-    int32_t mID; 
+    int mID; 
+    std::string mRigidBodyName; 
 
     std::mutex mStateMutex; 
 

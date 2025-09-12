@@ -2,8 +2,8 @@
 #include "abv_controller/OptitrackStateFetcher_NatNet.h"
 #include "plog/Log.h"
 
-OptitrackStateFetcher_NatNet::OptitrackStateFetcher_NatNet(NetworkConfig aConfig) : 
-        mNatNetClient(nullptr), mConfig(aConfig), mID(1)
+OptitrackStateFetcher_NatNet::OptitrackStateFetcher_NatNet(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName) : 
+        mNatNetClient(nullptr), mConfig(aConfig), mID(aRigidBodyId), mRigidBodyName(aRigidBodyName)
 {
 
 }
@@ -67,10 +67,12 @@ Eigen::Matrix<double, 6, 1> OptitrackStateFetcher_NatNet::fetchState()
 
 void OptitrackStateFetcher_NatNet::frameRecvdCallback(sFrameOfMocapData* data, void* pUserData)
 {
-    //TODO: put the robot's optitrack ID in a config file
+
     for(size_t i = 0; i < data->nRigidBodies; i++)
     {
-        if(data->RigidBodies[i].ID == mID)
+        std::string rigidBodyName(data->RigidBodies[i].szName, sizeof(data->RigidBodies[i].szName)); 
+
+        if(rigidBodyName == mRigidBodyName)
         {
             auto rb = data->RigidBodies[i]; 
             

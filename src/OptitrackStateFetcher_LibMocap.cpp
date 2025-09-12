@@ -3,8 +3,8 @@
 #include "plog/Log.h"
 #include <iostream> 
 
-OptitrackStateFetcher_LibMocap::OptitrackStateFetcher_LibMocap(NetworkConfig aConfig) : 
-    mConfig(aConfig), mID(1)
+OptitrackStateFetcher_LibMocap::OptitrackStateFetcher_LibMocap(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName) : 
+    mConfig(aConfig), mID(aRigidBodyId), mRigidBodyName(aRigidBodyName)
 {
 
 }
@@ -54,57 +54,50 @@ void OptitrackStateFetcher_LibMocap::listen()
 {
     while(true)
     {
-        for (size_t frameId = 0;; ++frameId)
+        // Get a frame
+        mMocap->waitForNextFrame();
+
+        if (mMocap->supportsRigidBodyTracking()) 
         {
-            // Get a frame
-            mMocap->waitForNextFrame();
+            auto rigidBodies = mMocap->rigidBodies();
+            std::cout << "  rigid bodies:" << std::endl;
 
-            std::cout << "frame " << frameId << std::endl;
-            if (mMocap->supportsTimeStamp()) 
+            for (auto const& item : rigidBodies) 
             {
-                std::cout << "  timestamp: " << mMocap->timeStamp() << " us" << std::endl;
-            }
+                const auto& rigidBody = item.second;
+                std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
 
-            if (mMocap->supportsLatencyEstimate()) 
-            {
-                std::cout << "  latency: " << std::endl;
-                for (const auto& latency : mMocap->latency()) 
+                if(rigidBody.name() == mRigidBodyName)
                 {
-                    std::cout << "    " << latency.name() << " " << latency.value() << " s" << std::endl;
+                    Eigen::Vector3f pos = rigidBody.position(); 
+
+                    // take the xyz
+                    Eigen::Matrix<double, 6, 1> state; 
+                    state[0] = (double) pos(0); 
+                    state[1] = (double) pos(1); 
+                    state[2] = (double) pos(2); 
+
+                    // convert the quaternion to Euler angles
+                    Eigen::Quaternionf q = rigidBody.rotation(); 
+                    q.normalize(); 
+
+                    Eigen::Matrix3f rotationMatrix = q.toRotationMatrix(); 
+                    Eigen::Vector3f angles = rotationMatrix.eulerAngles(2, 1, 0); 
+
+                    state[3] = (double)angles[0]; 
+                    state[4] = (double)angles[1]; 
+                    state[5] = (double)angles[2]; 
+
+                    setLatestState(state); 
                 }
-            }
 
-            if (mMocap->supportsPointCloud()) 
-            {
-                std::cout << "  pointcloud:" << std::endl;
-                auto pointcloud = mMocap->pointCloud();
-                
-                for (size_t i = 0; i < pointcloud.rows(); ++i) 
-                {
-                    const auto& point = pointcloud.row(i);
-                    std::cout << "    \"" << i << "\": [" << point(0) << "," << point(1) << "," << point(2) << "]" << std::endl;
-                }
-            }
-
-            if (mMocap->supportsRigidBodyTracking()) 
-            {
-                auto rigidBodies = mMocap->rigidBodies();
-
-                std::cout << "  rigid bodies:" << std::endl;
-
-                for (auto const& item: rigidBodies) {
-                    const auto& rigidBody = item.second;
-
-                    std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
-
-                    const auto& position = rigidBody.position();
-                    const auto& rotation = rigidBody.rotation();
-                    std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
-                    std::cout << "       rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
-                                                        << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
-                }
+                // TODO: remove after testing 
+                const auto& position = rigidBody.position();
+                const auto& rotation = rigidBody.rotation();
+                std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
+                std::cout << "       rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
+                                                    << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
             }
         }
     }
-
 }

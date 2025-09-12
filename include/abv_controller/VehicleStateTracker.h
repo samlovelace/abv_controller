@@ -10,7 +10,7 @@
 class VehicleStateTracker
 {
 public:
-    VehicleStateTracker(/* args */);
+    VehicleStateTracker(const std::string& aRigidBodyName);
     ~VehicleStateTracker();
 
     enum class FetcherType

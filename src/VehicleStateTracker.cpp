@@ -14,7 +14,7 @@ using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap;
 #include "plog/Log.h"
 #include <thread>
 
-VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), mCurrentState(Eigen::VectorXd::Zero(6))
+VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), mCurrentState(Eigen::VectorXd::Zero(6))
 {
     FetcherType typeToMake = toEnum(mConfig.mInterface); 
 
@@ -25,7 +25,7 @@ VehicleStateTracker::VehicleStateTracker() : mConfig(ConfigurationManager::getIn
         LOGD << "Configuring ABV to use Simulated state feedback"; 
         break;
     case FetcherType::OPTITRACK: 
-        mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mNetwork); 
+        mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mNetwork, mConfig.mRigidBodyId, aRigidBodyName); 
         LOGD << "Configuring ABV to use OptiTrack for state feedback"; 
         break;
     default:
