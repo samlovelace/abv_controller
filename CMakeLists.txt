@@ -20,7 +20,7 @@ find_package(robot_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-option(ARCH_TEST "Force-disable NatNet regardless of architecture" OFF)
+option(ARCH_TEST "Force-disable NatNetSDK regardless of architecture" OFF)
 
 # Architecture detection
 set(USE_NATNET FALSE)
@@ -111,5 +111,10 @@ endif()
 # Install
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
+
+install(
+  PROGRAMS run.sh
+  DESTINATION bin
+)
 
 ament_package()

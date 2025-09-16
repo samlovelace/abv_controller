@@ -70,9 +70,10 @@ void OptitrackStateFetcher_NatNet::frameRecvdCallback(sFrameOfMocapData* data, v
 
     for(size_t i = 0; i < data->nRigidBodies; i++)
     {
-        std::string rigidBodyName(data->RigidBodies[i].szName, sizeof(data->RigidBodies[i].szName)); 
+        // TODO: update to get rigid body name and use that 
+        //std::string rigidBodyName(data->RigidBodies[i].szName, sizeof(data->RigidBodies[i].szName)); 
 
-        if(rigidBodyName == mRigidBodyName)
+        if(data->RigidBodies[i].ID == mID)
         {
             auto rb = data->RigidBodies[i]; 
             
