@@ -2,7 +2,7 @@
 
 WS=$1
 
-source "$WS/src/robot_idl/common.sh" "$@"
+source "$WS/src/robot_idl/scripts/common.sh" "$@"
 
 # Subtract 2 from total cores
 CORES=$(( $(nproc) - 2 ))
