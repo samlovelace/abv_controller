@@ -4,60 +4,18 @@ The ABV_Controller module runs on board the air-bearing vehicles and controls th
 
 ## Dependencies
 
-Install the required dependencies using the command below
-
-```bash
-sudo apt update
-sudo apt install -y \
-    build-essential \
-    cmake \
-    libeigen3-dev \
-    libyaml-cpp-dev \
-    ros-humble-desktop \
-    python3-colcon-common-extensions \
-    libsfml-dev
-```
-
-## Workspace
-
-Setup a workspace to clone each of the abv software modules in.
-
-```bash
-mkdir -p ~/abv_ws/src
-```
+The list of dependencies are in deps.sh. This file will be used by robot_idl to install the required dependencies.
 
 ## Install
 
-Clone this repo into the src directory of the workspace made above.
+This module depends on custom ROS2 msgs defined in the robot_idl repo. Clone robot_idl into a workspace and run the setup script for the vehicle as shown below.
 
 ```bash
-cd ~/abv_ws/src && git clone https://github.com/samlovelace/abv_controller.git
-```
-
-Then run the clone.sh script to clone the other abv modules.
-
-```bash
-cd ~abv_ws/src/abv_controller
-chmod +x clone.sh
-./clone.sh
-```
-
-Confirm that the required repositories were installed alongside the abv_controller repository in the src directory of the workspace. The folder structure should look like this
-
-- abv_ws
-  - src
-    - abv_controller
-    - robot_idl
-    - abv_teleop
-    - abv_communications
-    - abv_docker
-
-## Compile
-
-Navigate to the root of the workspace and build the abv modules
-
-```bash
-cd ~/abv_ws && colcon build
+$ mkdir -p ~/robot_ws/src
+$ git clone https://github.com/samlovelace/robot_idl.git
+$ cd robot_idl/scripts
+$ chmod +x setup.sh
+$ sudo ./setup vehicle
 ```
 
 ## Run
