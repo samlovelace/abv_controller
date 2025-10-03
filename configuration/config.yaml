@@ -25,7 +25,7 @@ Thrusters:
   ThrusterDriver:
     Type: JETGPIO
     GPIO:
-      pins: [7, 12]
+      pins: [12, 7, 8, 24, 19, 22, 15, 13]
 
 Network:
   Local:
