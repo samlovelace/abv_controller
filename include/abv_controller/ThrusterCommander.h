@@ -18,7 +18,7 @@ public:
 
     void commandThrusters(Eigen::Vector3d aControlInput); 
 
-private:
+protected:
     Eigen::Vector3i convertToThrustVector(Eigen::Vector3d aControlInput); 
     void determineThrusterCommand(Eigen::Vector3i aThrustDirVec);
 

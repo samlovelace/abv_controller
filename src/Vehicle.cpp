@@ -18,7 +18,7 @@ Vehicle::~Vehicle()
 bool Vehicle::init()
 {
     mThrusterCommander = std::make_unique<ThrusterCommander>();
-    mThrusterCommander->init(); 
+    //mThrusterCommander->init(); 
 }
 
 void Vehicle::doThrusterControl()
