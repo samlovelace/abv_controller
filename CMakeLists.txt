@@ -119,4 +119,9 @@ endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
 
+install(
+  PROGRAMS run.sh
+  DESTINATION bin
+)
+
 ament_package()
