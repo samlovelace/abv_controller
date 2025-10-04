@@ -32,6 +32,7 @@ struct StateTrackerConfig
     std::string mInterface;
     int mRate;
     NetworkConfig mNetwork;
+    int mRigidBodyId; 
 };
 
 struct StatePublisherConfig 

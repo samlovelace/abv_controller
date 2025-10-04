@@ -74,6 +74,7 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     YAML::Node stateTrackerNode = config["StateTracker"]; 
     mConfigurations.vehicleConfig.stateTrackerConfig.mInterface = stateTrackerNode["Interface"].as<std::string>(); 
     mConfigurations.vehicleConfig.stateTrackerConfig.mRate = stateTrackerNode["Rate"].as<int>(); 
+    mConfigurations.vehicleConfig.stateTrackerConfig.mRigidBodyId = stateTrackerNode["RigidBodyId"].as<int>(); 
 
     return true; 
 }
