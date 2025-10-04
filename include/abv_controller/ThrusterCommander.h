@@ -5,6 +5,7 @@
 #include "abv_controller/Configurations.h"
 #include "abv_controller/ConfigurationManager.h"
 #include "abv_controller/UdpClient.h"
+#include "abv_controller/IThrusterDriver.hpp"
 
 #include <mutex> 
 #include <memory>
@@ -12,14 +13,12 @@
 class ThrusterCommander
 {
 public:
-    ThrusterCommander();
+    ThrusterCommander(/* args */);
     ~ThrusterCommander();
-
-    bool init(); 
 
     void commandThrusters(Eigen::Vector3d aControlInput); 
 
-protected:
+private:
     Eigen::Vector3i convertToThrustVector(Eigen::Vector3d aControlInput); 
     void determineThrusterCommand(Eigen::Vector3i aThrustDirVec);
 
@@ -29,6 +28,8 @@ protected:
     Eigen::Matrix<int, 3, 27> mMatrixOfThrustDirCombinations; 
 
     std::unique_ptr<UdpClient> mUdpClient; 
+
+    std::unique_ptr<IThrusterDriver> mThrusterDriver; 
 
 };
 
