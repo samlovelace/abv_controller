@@ -16,7 +16,7 @@ ThrusterCommander::~ThrusterCommander()
 
 bool ThrusterCommander::init()
 {
-    mUdpClient = std::make_unique<UdpClient>(mConfig.arduino.IP,mConfig.arduino.CmdPort);
+    
 }
 
 void ThrusterCommander::commandThrusters(Eigen::Vector3d aControlInput)
