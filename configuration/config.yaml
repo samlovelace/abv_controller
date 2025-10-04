@@ -1,5 +1,5 @@
 StateMachine:
-  Rate: 10 # Hz
+  Rate: 10 # hz
 
 Vehicle:
   Name: Optimus
@@ -11,7 +11,6 @@ Vehicle:
 StateTracker:
   Interface: optitrack
   Rate: 10 # Hz
-  RigidBodyId: 1
 
 Controller:
   Kp: [5.0, 5.0, 5.0]
@@ -23,14 +22,14 @@ Thrusters:
     On: 0.2
     Off: 0.09
 
-Network:
-  Arduino:
-    Ip: 192.168.1.18
-    cmdPort: 1001
-    dataPort: 1000
+  ThrusterDriver:
+    Type: JETGPIO
+    GPIO:
+      pins: [12, 7, 8, 24, 19, 22, 15, 13]
 
+Network:
   Local:
-    Ip: 192.168.0.69
+    Ip: 192.168.1.15
     cmdPort: 1002
     dataPort: 1001
 

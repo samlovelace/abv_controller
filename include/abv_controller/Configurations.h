@@ -5,51 +5,59 @@
 #include <vector>
 #include <eigen3/Eigen/Dense>
 #include <yaml-cpp/yaml.h>
+#include <plog/Log.h>
 
-struct StateMachineConfig {
+struct StateMachineConfig 
+{
     std::string mControlMode;
     int mFrequency;
 };
 
-struct SocketConfig {
+struct SocketConfig 
+{
     std::string IP;
     int CmdPort;
     int DataPort;
 };
 
-struct NetworkConfig {
+struct NetworkConfig 
+{
     SocketConfig Server;
     SocketConfig Local;
     SocketConfig Multicast;
-    SocketConfig Arduino;
 };
 
-struct StateTrackerConfig {
+struct StateTrackerConfig 
+{
     std::string mInterface;
     int mRate;
-    int mRigidBodyId; 
     NetworkConfig mNetwork;
 };
 
-struct StatePublisherConfig {
+struct StatePublisherConfig 
+{
     std::string mInterface; 
     int mRate; 
 };
 
-struct ThrusterConfig {
-    SocketConfig arduino;
+struct ThrusterConfig 
+{
     double uOn;
     double uOff;
+    std::string mType; 
+    std::vector<int> mGpioPins; 
 };
 
-struct ControllerConfig {
+struct ControllerConfig 
+{
     Eigen::Vector3d Kp;
     Eigen::Vector3d Ki;
     Eigen::Vector3d Kd;
     ThrusterConfig thrusterConfig;
 };
 
-struct VehicleConfig {
+struct VehicleConfig 
+{
     std::string Name;
     double Mass;
     double Inertia;
@@ -61,7 +69,8 @@ struct VehicleConfig {
     ControllerConfig controllerConfig;
 };
 
-struct Configurations {
+struct Configurations 
+{
     StateMachineConfig stateMachineConfig;
     VehicleConfig vehicleConfig;
 };
@@ -76,8 +85,28 @@ namespace ConfigUtils
             vec[0] = node[0].as<double>();
             vec[1] = node[1].as<double>();
             vec[2] = node[2].as<double>();
-        } else {
+        } 
+        else 
+        {
             throw std::runtime_error("Invalid Vector3d format in YAML.");
+        }
+
+        return vec;
+    }
+
+    static std::vector<int> parseIntVector(const YAML::Node& node)
+    {
+        if (!node || !node.IsSequence()) 
+        {
+            throw std::runtime_error("Invalid int vector format in YAML.");
+        }
+
+        std::vector<int> vec;
+        vec.reserve(node.size());  // Optional, improves efficiency
+
+        for (const auto& element : node) 
+        {
+            vec.push_back(element.as<int>());
         }
 
         return vec;

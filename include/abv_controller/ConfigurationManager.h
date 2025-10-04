@@ -20,7 +20,6 @@ public:
     StateTrackerConfig getStateTrackerConfig() {return mConfigurations.vehicleConfig.stateTrackerConfig;}
     StatePublisherConfig getStatePublisherConfig() {return mConfigurations.vehicleConfig.statePublisherConfig;}
     ControllerConfig getControllerConfig() {return mConfigurations.vehicleConfig.controllerConfig;}
-    VehicleConfig getVehicleConfig() {return mConfigurations.vehicleConfig; }
 
 private: 
     ConfigurationManager();

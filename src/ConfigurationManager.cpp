@@ -53,6 +53,10 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOn = thrusterNode["On"].as<double>();
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOff = thrusterNode["Off"].as<double>();
 
+    YAML::Node thrusterDriverNode = config["Thrusters"]["ThrusterDriver"]; 
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.mType = thrusterDriverNode["Type"].as<std::string>(); 
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.mGpioPins = ConfigUtils::parseIntVector(thrusterDriverNode["GPIO"]["pins"]);
+
     // Parse Network Configuration
     auto parseSocket = [](const YAML::Node& node) -> SocketConfig {
         return {
@@ -66,12 +70,10 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Server = parseSocket(networkNode["Server"]);
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Local = parseSocket(networkNode["Local"]);
     mConfigurations.vehicleConfig.stateTrackerConfig.mNetwork.Multicast = parseSocket(networkNode["Multicast"]);
-    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.arduino = parseSocket(networkNode["Arduino"]);
 
     YAML::Node stateTrackerNode = config["StateTracker"]; 
     mConfigurations.vehicleConfig.stateTrackerConfig.mInterface = stateTrackerNode["Interface"].as<std::string>(); 
     mConfigurations.vehicleConfig.stateTrackerConfig.mRate = stateTrackerNode["Rate"].as<int>(); 
-    mConfigurations.vehicleConfig.stateTrackerConfig.mRigidBodyId = stateTrackerNode["RigidBodyId"].as<int>(); 
 
     return true; 
 }
