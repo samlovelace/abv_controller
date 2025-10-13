@@ -22,8 +22,9 @@ private:
     std::thread mStatePublishThread; 
     bool mShouldPublishState; 
     std::mutex mShouldPublishStateMutex; 
+    std::string mTopicName; 
 
-    robot_idl::msg::AbvState convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector); 
+    robot_idl::msg::AbvState convertToIdlMsg(Eigen::Matrix<float, 13, 1> aStateVector); 
 };
 
 #endif // ROSSTATEPUBLISHER_H

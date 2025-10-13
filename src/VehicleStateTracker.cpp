@@ -1,20 +1,15 @@
 
 #include "abv_controller/VehicleStateTracker.h"
-
-
-#ifdef USE_NATNET
-#include "abv_controller/OptitrackStateFetcher_NatNet.h"
-using OptitrackStateFetcher = OptitrackStateFetcher_NatNet;
-#else
 #include "abv_controller/OptitrackStateFetcher_LibMocap.h"
-using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap;
-#endif
-
 #include "abv_controller/SimulatedStateFetcher.h"
 #include "plog/Log.h"
 #include <thread>
 
-VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) : mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), mCurrentState(Eigen::VectorXd::Zero(6))
+using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap; 
+
+VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) : 
+            mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), 
+            mCurrentState(Eigen::VectorXf::Zero(13))
 {
     FetcherType typeToMake = toEnum(mConfig.mInterface); 
 

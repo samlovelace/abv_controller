@@ -6,9 +6,10 @@
 #include "plog/Log.h"
 
 RosStatePublisher::RosStatePublisher(std::shared_ptr<VehicleStateTracker> aStateTracker) : 
-    mStateTracker(aStateTracker), mConfig(ConfigurationManager::getInstance()->getStatePublisherConfig())
+    mStateTracker(aStateTracker), mConfig(ConfigurationManager::getInstance()->getStatePublisherConfig()), 
+    mTopicName("abv/state")
 {
-    RosTopicManager::getInstance()->createPublisher<robot_idl::msg::AbvState>("abv_state");
+    RosTopicManager::getInstance()->createPublisher<robot_idl::msg::AbvState>(mTopicName);
     mStatePublishThread = std::thread(&RosStatePublisher::publishStateLoop, this); 
 }
 
@@ -35,10 +36,10 @@ void RosStatePublisher::publishStateLoop()
     {
         auto loop_start = std::chrono::steady_clock::now();
 
-        Eigen::Matrix<double, 6, 1> currentState = mStateTracker->getCurrentState(); 
-        topicManager->publishMessage("abv_state", convertToIdlMsg(currentState)); 
+        Eigen::Matrix<float, 13, 1> currentState = mStateTracker->getCurrentState(); 
+        topicManager->publishMessage(mTopicName, convertToIdlMsg(currentState)); 
 
-        // execution frequency control here 
+        // execution frequency control here s
         auto loop_end = std::chrono::steady_clock::now();
         auto elapsed = loop_end - loop_start;
 
@@ -53,7 +54,7 @@ void RosStatePublisher::publishStateLoop()
     }
 }
 
-robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<double, 6, 1> aStateVector)
+robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<float, 13, 1> aStateVector)
 {
     robot_idl::msg::AbvVec3 position; 
     robot_idl::msg::AbvVec3 velocity;
