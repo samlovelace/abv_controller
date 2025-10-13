@@ -7,7 +7,7 @@ CommandHandler::CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_pt
     mStateMachine(msm), mVehicle(abv)
 {
     auto topicManager = RosTopicManager::getInstance(); 
-    topicManager->createSubscriber<robot_idl::msg::AbvCommand>("abv_command", 
+    topicManager->createSubscriber<robot_idl::msg::AbvCommand>("abv/command", 
                                     std::bind(&CommandHandler::commandCallback, this, std::placeholders::_1)); 
 
     topicManager->spinNode(); 

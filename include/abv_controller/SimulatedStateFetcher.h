@@ -11,15 +11,15 @@ public:
     ~SimulatedStateFetcher() override; 
 
     bool init() override; 
-    Eigen::Matrix<double, 6,1> fetchState() override; 
+    Eigen::Matrix<float, 13,1> fetchState() override; 
 
 private:
     void stateCallback(robot_idl::msg::AbvState::SharedPtr aSimState); 
 
     std::mutex mStateMutex; 
-    Eigen::Matrix<double, 6, 1> mState; 
+    Eigen::Matrix<float, 13, 1> mState; 
 
-    void setState(Eigen::Matrix<double, 6, 1> aState); 
+    void setState(Eigen::Matrix<float, 13, 1> aState); 
 
 };
 

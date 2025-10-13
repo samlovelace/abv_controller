@@ -24,31 +24,32 @@ bool OptitrackStateFetcher_LibMocap::init()
     cfg.insert({"interface_ip", mConfig.Local.IP}); 
     
     mMocap = std::unique_ptr<libmotioncapture::MotionCapture>(
-        libmotioncapture::MotionCapture::connect("optitrack", cfg)
+        libmotioncapture::MotionCapture::connect("vrpn", cfg)
     );
 
     if(!mMocap)
     {
-        LOGD << "Could not create unique_ptr of mocap obj"; 
+        LOGD << "Failed to initialize mocap client"; 
         return false; 
     }
 
-    LOGD << "supportsRigidBodyTracking: " << mMocap->supportsRigidBodyTracking();
-    LOGD << "supportsLatencyEstimate: " << mMocap->supportsLatencyEstimate(); 
-    LOGD << "supportsPointCloud: " << mMocap->supportsPointCloud(); 
-    LOGD << "supportsTimeStamp: " << mMocap->supportsTimeStamp();
-
+    LOGV << "mocap client initialized successfully"; 
     mListenThread = std::thread(&OptitrackStateFetcher_LibMocap::listen, this); 
-
     return true; 
 }
 
 
-Eigen::Matrix<double, 6, 1> OptitrackStateFetcher_LibMocap::fetchState()
+Eigen::Matrix<float, 13, 1> OptitrackStateFetcher_LibMocap::fetchState()
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     return mLatestState; 
 } 
+
+void OptitrackStateFetcher_LibMocap::setLatestState(Eigen::Matrix<float, 13, 1> aLatestState)
+{
+    std::lock_guard<std::mutex> lock(mStateMutex); 
+    mLatestState = aLatestState; 
+}
 
 void OptitrackStateFetcher_LibMocap::listen()
 {
@@ -60,7 +61,14 @@ void OptitrackStateFetcher_LibMocap::listen()
         if (mMocap->supportsRigidBodyTracking()) 
         {
             auto rigidBodies = mMocap->rigidBodies();
+
+            if(rigidBodies.empty())
+            {
+                continue;
+            }
+
             std::cout << "  rigid bodies:" << std::endl;
+            auto dt = std::chrono::steady_clock::now() - mPrevRecvdTime; 
 
             for (auto const& item : rigidBodies) 
             {
@@ -72,23 +80,41 @@ void OptitrackStateFetcher_LibMocap::listen()
                     Eigen::Vector3f pos = rigidBody.position(); 
 
                     // take the xyz
-                    Eigen::Matrix<double, 6, 1> state; 
-                    state[0] = (double) pos(0); 
-                    state[1] = (double) pos(1); 
-                    state[2] = (double) pos(2); 
+                    Eigen::Matrix<float, 13, 1> state; 
+                    state[0] = pos(0); 
+                    state[1] = pos(1); 
+                    state[2] = pos(2); 
+
+                    // compute linear velocity 
+                    for(int i=0; i<3; i++)
+                    {   
+                        state[i+3] = (state[i] - mPrevState[i])/ dt.count(); 
+                    }
 
                     // convert the quaternion to Euler angles
                     Eigen::Quaternionf q = rigidBody.rotation(); 
                     q.normalize(); 
 
-                    Eigen::Matrix3f rotationMatrix = q.toRotationMatrix(); 
-                    Eigen::Vector3f angles = rotationMatrix.eulerAngles(2, 1, 0); 
+                    // quaternion in core state vector
+                    state[6] = q.w();  
+                    state[7] = q.x(); 
+                    state[8] = q.y(); 
+                    state[9] = q.z(); 
 
-                    state[3] = (double)angles[0]; 
-                    state[4] = (double)angles[1]; 
-                    state[5] = (double)angles[2]; 
+                    // angular velocity
+                    // previous quaternion
+                    Eigen::Quaternionf prev(mPrevState[6], mPrevState[7], mPrevState[8], mPrevState[9]); 
+                    Eigen::Quaternionf qDelta = q * prev.inverse();
+                    Eigen::Vector3f angularVelocity = 2.0 * qDelta.vec() / dt.count(); 
 
+                    state[10] = angularVelocity.x(); 
+                    state[11] = angularVelocity.y(); 
+                    state[12] = angularVelocity.z(); 
+
+                    // set latest state and update previous values
                     setLatestState(state); 
+                    mPrevState = state; 
+                    mPrevRecvdTime = std::chrono::steady_clock::now();  
                 }
 
                 // TODO: remove after testing 
