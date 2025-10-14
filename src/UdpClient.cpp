@@ -38,10 +38,14 @@ UdpClient::~UdpClient() {
 #endif
 }
 
-void UdpClient::send(const std::string& message) {
+bool UdpClient::send(const std::string& message) 
+{
     if (sendto(mSocket, message.c_str(), message.size(), 0,
                reinterpret_cast<struct sockaddr*>(&mServerAddress),
-               sizeof(mServerAddress)) < 0) {
-        throw std::runtime_error("Failed to send message.");
+               sizeof(mServerAddress)) < 0) 
+    {
+        return false; 
     }
+
+    return true; 
 }

@@ -3,8 +3,9 @@
 #include "plog/Log.h"
 
 #if defined(ARCH_X86)
-    #include "abv_controller/DummyThrusterDriver.h"
-    using ThrusterDriverImpl = DummyThrusterDriver;
+    // not really arch specific but im too lazy to make configurable rn
+    #include "abv_controller/UdpThrusterDriver.h"
+    using ThrusterDriverImpl = UdpThrusterDriver;
 #elif defined(ARCH_ARM)
     #include "abv_controller/GpioThrusterDriver.h"
     using ThrusterDriverImpl = GpioThrusterDriver;

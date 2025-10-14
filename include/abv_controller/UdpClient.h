@@ -14,12 +14,13 @@
     #include <unistd.h>
 #endif
 
-class UdpClient {
+class UdpClient 
+{
 public:
     UdpClient(const std::string& ip, int port);
     ~UdpClient();
 
-    void send(const std::string& message);
+    bool send(const std::string& message);
 
 private:
     int mSocket;

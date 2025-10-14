@@ -48,6 +48,7 @@ set(ABV_CONTROLLER_SOURCES
   src/StateMachine.cpp
   src/ThrusterCommander.cpp
   src/UdpClient.cpp
+  src/UdpThrusterDriver.cpp
   src/Vehicle.cpp
   src/VehicleStateTracker.cpp
 )
