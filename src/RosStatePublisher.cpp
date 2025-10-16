@@ -31,6 +31,7 @@ void RosStatePublisher::publishStateLoop()
     const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate); 
 
     LOGD << "Starting ROS state publishing thread";
+    setPublishingState(true); 
 
     while(shouldPublishState())
     {

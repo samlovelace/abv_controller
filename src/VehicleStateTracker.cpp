@@ -64,9 +64,7 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
 
 // TODO: figure out what behavior we want for this. Constantly state tracking or able to stop and restart?
 void VehicleStateTracker::stateTrackerLoop()
-{   
-    LOGD << "Starting state tracking thread"; 
-
+{  
     const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate);
     
     if(!mStateFetcher->init())
@@ -74,12 +72,15 @@ void VehicleStateTracker::stateTrackerLoop()
         LOGE << "Could not initialize state fetcher of type: " << mConfig.mInterface; 
         return; 
     }
+    LOGD << "Starting state tracking thread"; 
+    setStateTracking(true); 
 
     while(doStateTracking())
     {
         auto start = std::chrono::steady_clock::now(); 
 
-        mStateFetcher->fetchState(); 
+        auto state = mStateFetcher->fetchState();
+        setCurrentState(state); 
 
         // Calculate the time taken for the loop iteration
         auto loop_end = std::chrono::steady_clock::now();

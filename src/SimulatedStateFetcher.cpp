@@ -14,7 +14,7 @@ SimulatedStateFetcher::~SimulatedStateFetcher()
 
 bool SimulatedStateFetcher::init()
 {
-    RosTopicManager::getInstance()->createSubscriber<robot_idl::msg::AbvState>("abv_state_simulated", 
+    RosTopicManager::getInstance()->createSubscriber<robot_idl::msg::AbvState>("abv/sim/state", 
                                                 std::bind(&SimulatedStateFetcher::stateCallback, this, std::placeholders::_1));
 
     return true; 
