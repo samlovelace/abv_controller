@@ -22,7 +22,7 @@ bool SimulatedStateFetcher::init()
 
 void SimulatedStateFetcher::stateCallback(robot_idl::msg::AbvState::SharedPtr aSimState)
 {
-    Eigen::Matrix<float, 13, 1> state; 
+    Eigen::Matrix<float, 12, 1> state; 
     state[0] = aSimState->position.x;
     state[1] = aSimState->position.y; 
     state[2] = aSimState->position.z; 
@@ -43,13 +43,13 @@ void SimulatedStateFetcher::stateCallback(robot_idl::msg::AbvState::SharedPtr aS
     setState(state); 
 }
 
-void SimulatedStateFetcher::setState(Eigen::Matrix<float, 13, 1> aState)
+void SimulatedStateFetcher::setState(Eigen::Matrix<float, 12, 1> aState)
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     mState = aState; 
 }
 
-Eigen::Matrix<float, 13,1> SimulatedStateFetcher::fetchState()
+Eigen::Matrix<float, 12,1> SimulatedStateFetcher::fetchState()
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     return mState; 

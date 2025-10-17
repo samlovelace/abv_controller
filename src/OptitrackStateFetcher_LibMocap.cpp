@@ -39,13 +39,13 @@ bool OptitrackStateFetcher_LibMocap::init()
 }
 
 
-Eigen::Matrix<float, 13, 1> OptitrackStateFetcher_LibMocap::fetchState()
+Eigen::Matrix<float, 12, 1> OptitrackStateFetcher_LibMocap::fetchState()
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     return mLatestState; 
 } 
 
-void OptitrackStateFetcher_LibMocap::setLatestState(Eigen::Matrix<float, 13, 1> aLatestState)
+void OptitrackStateFetcher_LibMocap::setLatestState(Eigen::Matrix<float, 12, 1> aLatestState)
 {
     std::lock_guard<std::mutex> lock(mStateMutex); 
     mLatestState = aLatestState; 
@@ -80,7 +80,7 @@ void OptitrackStateFetcher_LibMocap::listen()
                     Eigen::Vector3f pos = rigidBody.position(); 
 
                     // take the xyz
-                    Eigen::Matrix<float, 13, 1> state; 
+                    Eigen::Matrix<float, 12, 1> state; 
                     state[0] = pos(0); 
                     state[1] = pos(1); 
                     state[2] = pos(2); 
@@ -91,15 +91,20 @@ void OptitrackStateFetcher_LibMocap::listen()
                         state[i+3] = (state[i] - mPrevState[i])/ dt.count(); 
                     }
 
-                    // convert the quaternion to Euler angles
                     Eigen::Quaternionf q = rigidBody.rotation(); 
                     q.normalize(); 
 
-                    // quaternion in core state vector
-                    state[6] = q.w();  
-                    state[7] = q.x(); 
-                    state[8] = q.y(); 
-                    state[9] = q.z(); 
+                    // convert the quaternion to Euler angles
+                    // Convert to rotation matrix
+                    Eigen::Matrix3f rotationMatrix = q.toRotationMatrix();
+
+                    // Extract Euler angles (roll, pitch, yaw)
+                    // The arguments are the axes: 0 = X, 1 = Y, 2 = Z
+                    Eigen::Vector3f euler = rotationMatrix.eulerAngles(0, 1, 2);
+                    
+                    state[6] = euler[2];  
+                    state[7] = euler[1];
+                    state[8] = euler[0];  
 
                     // angular velocity
                     // previous quaternion
@@ -107,9 +112,9 @@ void OptitrackStateFetcher_LibMocap::listen()
                     Eigen::Quaternionf qDelta = q * prev.inverse();
                     Eigen::Vector3f angularVelocity = 2.0 * qDelta.vec() / dt.count(); 
 
-                    state[10] = angularVelocity.x(); 
-                    state[11] = angularVelocity.y(); 
-                    state[12] = angularVelocity.z(); 
+                    state[9] = angularVelocity.x(); 
+                    state[10] = angularVelocity.y(); 
+                    state[11] = angularVelocity.z(); 
 
                     // set latest state and update previous values
                     setLatestState(state); 

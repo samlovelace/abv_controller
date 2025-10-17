@@ -17,14 +17,14 @@ public:
     ~OptitrackStateFetcher_LibMocap() override; 
 
     bool init() override;
-    Eigen::Matrix<float, 13, 1> fetchState() override;  
+    Eigen::Matrix<float, 12, 1> fetchState() override;  
 
 private:
 
     std::unique_ptr<libmotioncapture::MotionCapture> mMocap; 
     NetworkConfig mConfig; 
-    Eigen::Matrix<float, 13, 1> mLatestState; 
-    Eigen::Matrix<float, 13,1> mPrevState; 
+    Eigen::Matrix<float, 12, 1> mLatestState; 
+    Eigen::Matrix<float, 12,1> mPrevState; 
     int mID; 
     std::string mRigidBodyName; 
     std::mutex mStateMutex; 
@@ -34,7 +34,7 @@ private:
 private: 
 
     void listen(); 
-    void setLatestState(Eigen::Matrix<float, 13, 1> aLatestState);
+    void setLatestState(Eigen::Matrix<float, 12, 1> aLatestState);
    
 };
 #endif //OPTITRACKSTATEFETCHER_LIBMOCAP_H
