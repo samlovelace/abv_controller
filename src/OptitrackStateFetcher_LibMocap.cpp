@@ -67,13 +67,14 @@ void OptitrackStateFetcher_LibMocap::listen()
                 continue;
             }
 
-            std::cout << "  rigid bodies:" << std::endl;
+            //std::cout << "  rigid bodies:" << std::endl;
             auto dt = std::chrono::steady_clock::now() - mPrevRecvdTime; 
 
             for (auto const& item : rigidBodies) 
             {
+                double roll, pitch, yaw;
                 const auto& rigidBody = item.second;
-                std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
+                //std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
 
                 if(rigidBody.name() == mRigidBodyName)
                 {
@@ -92,19 +93,31 @@ void OptitrackStateFetcher_LibMocap::listen()
                     }
 
                     Eigen::Quaternionf q = rigidBody.rotation(); 
-                    q.normalize(); 
+                    q.normalize();
 
-                    // convert the quaternion to Euler angles
-                    // Convert to rotation matrix
-                    Eigen::Matrix3f rotationMatrix = q.toRotationMatrix();
+                    // Convert quaternion to Euler angles
+                    double qw = q.w(), qx = q.x(), qy = q.y(), qz = q.z();
 
-                    // Extract Euler angles (roll, pitch, yaw)
-                    // The arguments are the axes: 0 = X, 1 = Y, 2 = Z
-                    Eigen::Vector3f euler = rotationMatrix.eulerAngles(0, 1, 2);
-                    
-                    state[6] = euler[2];  
-                    state[7] = euler[1];
-                    state[8] = euler[0];  
+                    // Roll (x-axis rotation)
+                    double sinr_cosp = 2 * (qw * qx + qy * qz);
+                    double cosr_cosp = 1 - 2 * (qx * qx + qy * qy);
+                    roll = std::atan2(sinr_cosp, cosr_cosp);
+
+                    // Pitch (y-axis rotation)
+                    double sinp = 2 * (qw * qy - qz * qx);
+                    if (std::abs(sinp) >= 1)
+                        pitch = std::copysign(M_PI / 2, sinp);
+                    else
+                        pitch = std::asin(sinp);
+
+                    // Yaw (z-axis rotation)
+                    double siny_cosp = 2 * (qw * qz + qx * qy);
+                    double cosy_cosp = 1 - 2 * (qy * qy + qz * qz);
+                    yaw = std::atan2(siny_cosp, cosy_cosp);
+
+                    state[6] = yaw;  
+                    state[7] = pitch;
+                    state[8] = roll;  
 
                     // angular velocity
                     // previous quaternion
@@ -124,10 +137,10 @@ void OptitrackStateFetcher_LibMocap::listen()
 
                 // TODO: remove after testing 
                 const auto& position = rigidBody.position();
-                const auto& rotation = rigidBody.rotation();
-                std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
-                std::cout << "       rotation: [" << rotation.w() << ", " << rotation.vec()(0) << ", "
-                                                    << rotation.vec()(1) << ", " << rotation.vec()(2) << "]" << std::endl;
+
+                //std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
+                //std::cout << "       rotation: [" << yaw << ", " << pitch << ", "
+                //                                  << roll << "]" << std::endl;
             }
         }
     }

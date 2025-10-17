@@ -9,7 +9,7 @@ using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap;
 
 VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) : 
             mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), 
-            mCurrentState(Eigen::VectorXf::Zero(13))
+            mCurrentState(Eigen::VectorXf::Zero(12))
 {
     FetcherType typeToMake = toEnum(mConfig.mInterface); 
 

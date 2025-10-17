@@ -37,7 +37,7 @@ void RosStatePublisher::publishStateLoop()
     {
         auto loop_start = std::chrono::steady_clock::now();
 
-        Eigen::Matrix<float, 13, 1> currentState = mStateTracker->getCurrentState(); 
+        Eigen::Matrix<float, 12, 1> currentState = mStateTracker->getCurrentState(); 
         topicManager->publishMessage(mTopicName, convertToIdlMsg(currentState)); 
 
         // execution frequency control here s
@@ -55,7 +55,7 @@ void RosStatePublisher::publishStateLoop()
     }
 }
 
-robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<float, 13, 1> aStateVector)
+robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<float, 12, 1> aStateVector)
 {
     robot_idl::msg::Vec3 position; 
     robot_idl::msg::Vec3 velocity;

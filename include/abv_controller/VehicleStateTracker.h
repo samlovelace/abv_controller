@@ -26,7 +26,7 @@ public:
     Eigen::Vector3d getCurrentPose() { std::lock_guard<std::mutex> lock(mCurrentPoseMutex); return mCurrentPose; }
     Eigen::Vector3d getCurrentVelocity() {std::lock_guard<std::mutex> lock(mCurrentVelocityMutex); return mCurrentVelocity; }
 
-    Eigen::Matrix<float, 13, 1> getCurrentState() { std::scoped_lock lock(mCurrentStateMutex); return mCurrentState; }
+    Eigen::Matrix<float, 12, 1> getCurrentState() { std::scoped_lock lock(mCurrentStateMutex); return mCurrentState; }
 
     bool doStateTracking() {std::lock_guard<std::mutex> lock(mStateTrackingMutex); return mDoStateTracking; }
     void setStateTracking(bool aFlag) {std::lock_guard<std::mutex> lock(mStateTrackingMutex); mDoStateTracking = aFlag; }
@@ -40,7 +40,7 @@ private:
 
     Eigen::Vector3d mCurrentPose;
     Eigen::Vector3d mCurrentVelocity;
-    Eigen::Matrix<float, 13, 1> mCurrentState;
+    Eigen::Matrix<float, 12, 1> mCurrentState;
 
     std::mutex mCurrentStateMutex;
     std::mutex mCurrentPoseMutex;
@@ -50,7 +50,7 @@ private:
     std::thread mStateTrackingThread;  
 
     VehicleStateTracker::FetcherType toEnum(std::string aTrackerType);
-    void setCurrentState(const Eigen::VectorXf& aState) { std::scoped_lock lock(mCurrentStateMutex); mCurrentState = aState; }
+    void setCurrentState(const Eigen::Matrix<float, 12, 1>& aState) { std::scoped_lock lock(mCurrentStateMutex); mCurrentState = aState; }
 
 };
 #endif // VEHICLESTATETRACKER_H
