@@ -47,6 +47,9 @@ private:
     std::unique_ptr<RosStatePublisher> mStatePublisher; 
     std::unique_ptr<Controller> mController; 
 
+private: 
+    Eigen::Vector3d convertToBodyFrame(Eigen::Vector3d aControlInputGlobal); 
+
 
 };
 #endif // VEHICLE_H

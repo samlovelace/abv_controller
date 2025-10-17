@@ -74,9 +74,9 @@ robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<float,
     orientation.z = aStateVector[6]; 
 
     robot_idl::msg::Vec3 ang_vel; 
-    orientation.x = aStateVector[11];
-    orientation.y = aStateVector[10]; 
-    orientation.z = aStateVector[9]; 
+    ang_vel.x = aStateVector[11];
+    ang_vel.y = aStateVector[10]; 
+    ang_vel.z = aStateVector[9]; 
 
     robot_idl::msg::AbvState state; 
     state.set__position(position); 

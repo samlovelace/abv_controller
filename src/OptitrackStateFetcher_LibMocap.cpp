@@ -133,6 +133,7 @@ void OptitrackStateFetcher_LibMocap::listen()
                     setLatestState(state); 
                     mPrevState = state; 
                     mPrevRecvdTime = std::chrono::steady_clock::now();  
+
                 }
 
                 // TODO: remove after testing 

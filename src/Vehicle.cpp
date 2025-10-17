@@ -24,7 +24,8 @@ bool Vehicle::init()
 void Vehicle::doThrusterControl()
 {
     Eigen::Vector3d controlInput = getControlInput(); 
-    mThrusterCommander->commandThrusters(controlInput);
+    Eigen::Vector3d controlInputBodyFrame = convertToBodyFrame(controlInput); 
+    mThrusterCommander->commandThrusters(controlInputBodyFrame);
 }
 
 void Vehicle::doPoseControl()
@@ -85,4 +86,21 @@ Eigen::Vector3d Vehicle::getControlInput()
 bool Vehicle::isControlInputStale() 
 {
     return std::chrono::steady_clock::now() - mLastInputRecvdAt > mStaleInputThreshold ? true : false;
+}
+
+Eigen::Vector3d Vehicle::convertToBodyFrame(Eigen::Vector3d aControlInputGlobal)
+{   
+    auto state = mStateTracker->getCurrentState();
+
+    // yaw is element 6 
+    double yaw = state[6]; 
+
+    // Create rotation matrix about Z-axis
+    Eigen::Matrix3d Rz;
+    Rz << cos(yaw), -sin(yaw), 0,
+         sin(yaw),  cos(yaw), 0,
+              0,         0, 1;
+
+    // Transform the vector into the new frame
+    return Rz * aControlInputGlobal;
 }
