@@ -69,7 +69,7 @@ Eigen::Vector3i ThrusterCommander::convertToThrustVector(Eigen::Vector3d aContro
 
     }
 
-    LOGW << "ThrustDir" << thrustDir; 
+    //LOGW << "ThrustDir" << thrustDir; 
     return thrustDir;
 }
 
@@ -186,16 +186,5 @@ void ThrusterCommander::determineThrusterCommand(Eigen::Vector3i aThrustDir)
     else if (aThrustDir.isApprox(mMatrixOfThrustDirCombinations.block<3, 1>(0, 26))) // nothing
     {
         mThrusterCommand = "00000000";
-        
-        // //if any pins are on, turn them all off  
-        // if(!mGpioHandler->areAllPinsOff())
-        // {
-        //     mGpioHandler->writeAll(0);
-        // }
     }
-
-    // if(!thrustersToFire.empty())
-    // {
-    //     mGpioHandler->writePins(thrustersToFire, 1);
-    // }
 }

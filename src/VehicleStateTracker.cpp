@@ -96,7 +96,3 @@ void VehicleStateTracker::stateTrackerLoop()
         }
     }
 }
-
-
-
-
