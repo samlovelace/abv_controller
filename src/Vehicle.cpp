@@ -95,11 +95,11 @@ Eigen::Vector3d Vehicle::convertToBodyFrame(Eigen::Vector3d aControlInputGlobal)
     // yaw is element 6 
     double yaw = state[6]; 
 
-    // Create rotation matrix about Z-axis
+    // invert rotation relative to global 
     Eigen::Matrix3d Rz;
-    Rz << cos(yaw), -sin(yaw), 0,
-         sin(yaw),  cos(yaw), 0,
-              0,         0, 1;
+    Rz << cos(yaw), sin(yaw), 0,
+         -sin(yaw), cos(yaw), 0,
+             0,        0,     1;
 
     // Transform the vector into the new frame
     return Rz * aControlInputGlobal;

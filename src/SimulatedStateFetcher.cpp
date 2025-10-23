@@ -31,13 +31,13 @@ void SimulatedStateFetcher::stateCallback(robot_idl::msg::AbvState::SharedPtr aS
     state[4] = aSimState->velocity.y; 
     state[5] = aSimState->velocity.z; 
 
-    state[6] = aSimState->orientation.x; 
+    state[6] = aSimState->orientation.z; 
     state[7] = aSimState->orientation.y; 
-    state[8] = aSimState->orientation.z; 
+    state[8] = aSimState->orientation.x; 
 
-    state[9] = aSimState->ang_vel.x; 
+    state[9] =  aSimState->ang_vel.z; 
     state[10] = aSimState->ang_vel.y; 
-    state[11] = aSimState->ang_vel.z; 
+    state[11] = aSimState->ang_vel.x; 
 
     // thread safe setting of state
     setState(state); 
