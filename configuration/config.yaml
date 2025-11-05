@@ -9,7 +9,7 @@ Vehicle:
   Force2: 0.08 # N
 
 StateTracker:
-  Interface: simulated
+  Interface: optitrack
   Rate: 10 # Hz
   RigidBodyId: 1
 
