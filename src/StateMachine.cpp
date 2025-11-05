@@ -26,18 +26,6 @@ void StateMachine::run()
     {
         auto loop_start = std::chrono::steady_clock::now(); 
 
-        // if not already in IDLE and control input has gone stale, transition to IDLE state
-        if(States::IDLE != getActiveState() && mVehicle->isControlInputStale())
-        {   
-            // set control input to zeros so we stop the thrusters
-            Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
-            mVehicle->setControlInput(zeros); 
-            mVehicle->doThrusterControl(); 
-
-            setActiveState(States::IDLE); 
-        }
-
-        // State machine switch case here 
         switch (getActiveState())
         {
         case States::IDLE:
@@ -45,6 +33,18 @@ void StateMachine::run()
 
         case States::THRUSTER_CONTROL:
 
+            if(mVehicle->isControlInputStale())
+            {
+                // set control input to zeros so we stop the thrusters
+                Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
+                mVehicle->setControlInput(zeros); 
+                mVehicle->doThrusterControl(); 
+
+                setActiveState(States::IDLE);
+                break; 
+            }    
+
+            // if here, control input not stale, apply it 
             mVehicle->doThrusterControl(); 
             break;
 
@@ -54,6 +54,7 @@ void StateMachine::run()
             break;
 
         case States::VELOCITY_CONTROL: 
+
             mVehicle->doVelocityControl(); 
             break; 
 
@@ -100,7 +101,11 @@ std::string StateMachine::toString(StateMachine::States aState)
     case StateMachine::States::POSE_CONTROL: 
         stringToReturn = "POSE_CONTROL"; 
         break;
+    case StateMachine::States::VELOCITY_CONTROL: 
+        stringToReturn = "VELOCITY_CONTROL"; 
+        break; 
     default:
+        stringToReturn = "UNKNOWN"; 
         break;
     }
 

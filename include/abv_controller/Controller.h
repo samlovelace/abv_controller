@@ -17,7 +17,7 @@ private:
     ControllerConfig mConfig; 
     std::chrono::steady_clock::time_point mPrevTime; 
     Eigen::Vector3d mPrevPoseError; 
-    Eigen::Vector3d mPrevPoseErrorIntegral; 
+    Eigen::Vector3d mPoseErrorIntegral; 
     
     
     Eigen::Vector3d PID(Eigen::Vector3d aPoseError); 

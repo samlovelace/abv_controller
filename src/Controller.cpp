@@ -4,7 +4,9 @@
 
 Controller::Controller() : mConfig(ConfigurationManager::getInstance()->getControllerConfig())
 {
-
+    mPrevTime = std::chrono::steady_clock::now(); 
+    mPrevPoseError = Eigen::Vector3d::Zero(); 
+    mPoseErrorIntegral = Eigen::Vector3d::Zero(); 
 }
 
 Controller::~Controller()
@@ -22,21 +24,22 @@ Eigen::Vector3d Controller::PID(Eigen::Vector3d aPoseError)
     using namespace std::chrono; 
     Eigen::Vector3d poseErrorDeriv; 
     Eigen::Vector3d poseErrorIntegral;
-    Eigen::Vector3d controlInput; 
+    Eigen::Vector3d controlInput = Eigen::Vector3d::Zero(); 
 
-    for(int i = 0; i < 2; i++)
+    double dt = duration_cast<milliseconds>(steady_clock::now() - mPrevTime).count() / 1000.0;
+
+    for (int i = 0; i < 3; i++) 
     {
-        auto dt = duration_cast<milliseconds>(steady_clock::now() - mPrevTime).count();  
-        poseErrorDeriv[i] = aPoseError[i] - mPrevPoseError[i] / dt;
-        poseErrorIntegral[i] = mPrevPoseErrorIntegral[i] + aPoseError[i]*dt; 
+        double error = aPoseError[i];
+        double deriv = (error - mPrevPoseError[i]) / dt;
+        mPoseErrorIntegral[i] += error * dt;
 
-        controlInput[i] = mConfig.Kp[i] * aPoseError[i] + 
-                          mConfig.Ki[i] * poseErrorIntegral[i] + 
-                          mConfig.Kd[i] * poseErrorDeriv[i];
+        controlInput[i] = mConfig.Kp[i] * error +
+                        mConfig.Ki[i] * mPoseErrorIntegral[i] +
+                        mConfig.Kd[i] * deriv;
     }
 
     mPrevPoseError = aPoseError; 
-    mPrevPoseErrorIntegral = poseErrorIntegral; 
     mPrevTime = steady_clock::now();
 
     return controlInput;
