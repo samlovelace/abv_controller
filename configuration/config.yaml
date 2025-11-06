@@ -9,14 +9,21 @@ Vehicle:
   Force2: 0.08 # N
 
 StateTracker:
-  Interface: optitrack
+  Interface: simulated
   Rate: 10 # Hz
   RigidBodyId: 1
+
+Network:
+  Local:
+    Ip: 192.168.1.15
+
+  Server:
+    Ip: 192.168.1.64
 
 Controller:
   Kp: [5.0, 5.0, 5.0]
   Ki: [0, 0, 0]
-  Kd: [10, 10, 10]
+  Kd: [15.0, 15.0, 15.0]
 
 Thrusters:
   InputDiscretization:
@@ -27,19 +34,3 @@ Thrusters:
     Type: JETGPIO
     GPIO:
       pins: [12, 7, 8, 24, 19, 22, 15, 13]
-
-Network:
-  Local:
-    Ip: 192.168.1.15
-    cmdPort: 1002
-    dataPort: 1001
-
-  Server:
-    Ip: 192.168.1.64
-    cmdPort: 1510
-    dataPort: 1511
-
-  Multicast:
-    Ip: 239.255.42.99
-    cmdPort: 1510
-    dataPort: 1511

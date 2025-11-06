@@ -35,8 +35,8 @@ Eigen::Vector3d Controller::PID(Eigen::Vector3d aPoseError)
         mPoseErrorIntegral[i] += error * dt;
 
         controlInput[i] = mConfig.Kp[i] * error +
-                        mConfig.Ki[i] * mPoseErrorIntegral[i] +
-                        mConfig.Kd[i] * deriv;
+                          mConfig.Ki[i] * mPoseErrorIntegral[i] +
+                          mConfig.Kd[i] * deriv;
     }
 
     mPrevPoseError = aPoseError; 

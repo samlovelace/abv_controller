@@ -43,13 +43,10 @@ void Vehicle::doPoseControl()
 void Vehicle::doVelocityControl()
 {
     auto state = mStateTracker->getCurrentState(); 
-    auto currentVel = Eigen::Vector3d(state[3], state[4], state[9]); 
-    LOGV << "vel state: " << currentVel[0] << "," << currentVel[1] << "," << currentVel[2];  
+    auto currentVel = Eigen::Vector3d(state[3], state[4], state[9]);  
 
     Eigen::Vector3d velError = getGoalVelocity() - currentVel; 
-    LOGV << "vel error: " << velError[0] << "," << velError[1] << "," << velError[2]; 
     Eigen::Vector3d controlInput = mController->computeControlInput(velError); 
-    LOGV << "input: " << controlInput[0] << "," << controlInput[1] << "," << controlInput[2]; 
 
     setControlInput(controlInput); 
     doThrusterControl(); 

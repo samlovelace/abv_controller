@@ -13,7 +13,11 @@
 class OptitrackStateFetcher_LibMocap : public IStateFetcher
 { 
 public:
-    OptitrackStateFetcher_LibMocap(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName);
+    OptitrackStateFetcher_LibMocap(const std::string& aServerIp, 
+                                   const std::string& aLocalIp, 
+                                   int aRigidBodyId, 
+                                   const std::string& aRigidBodyName);
+
     ~OptitrackStateFetcher_LibMocap() override; 
 
     bool init() override;
@@ -22,7 +26,8 @@ public:
 private:
 
     std::unique_ptr<libmotioncapture::MotionCapture> mMocap; 
-    NetworkConfig mConfig; 
+    std::string mServerIp; 
+    std::string mLocalIp; 
     Eigen::Matrix<float, 12, 1> mLatestState; 
     Eigen::Matrix<float, 12,1> mPrevState; 
     int mID; 

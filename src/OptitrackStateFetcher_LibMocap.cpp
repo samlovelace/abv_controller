@@ -3,8 +3,11 @@
 #include "plog/Log.h"
 #include <iostream> 
 
-OptitrackStateFetcher_LibMocap::OptitrackStateFetcher_LibMocap(NetworkConfig aConfig, int aRigidBodyId, const std::string& aRigidBodyName) : 
-    mConfig(aConfig), mID(aRigidBodyId), mRigidBodyName(aRigidBodyName)
+OptitrackStateFetcher_LibMocap::OptitrackStateFetcher_LibMocap(const std::string& aServerIp, 
+                                                               const std::string& aLocalIp, 
+                                                               int aRigidBodyId, 
+                                                               const std::string& aRigidBodyName) : 
+    mID(aRigidBodyId), mRigidBodyName(aRigidBodyName), mServerIp(aServerIp), mLocalIp(aLocalIp)
 {
 
 }
@@ -20,8 +23,8 @@ OptitrackStateFetcher_LibMocap::~OptitrackStateFetcher_LibMocap()
 bool OptitrackStateFetcher_LibMocap::init()
 {
     std::map<std::string, std::string> cfg; 
-    cfg.insert({"hostname", mConfig.Server.IP}); 
-    cfg.insert({"interface_ip", mConfig.Local.IP}); 
+    cfg.insert({"hostname", mServerIp}); 
+    cfg.insert({"interface_ip", mLocalIp}); 
     
     mMocap = std::unique_ptr<libmotioncapture::MotionCapture>(
         libmotioncapture::MotionCapture::connect("vrpn", cfg)
@@ -67,15 +70,13 @@ void OptitrackStateFetcher_LibMocap::listen()
                 continue;
             }
 
-            //std::cout << "  rigid bodies:" << std::endl;
             auto dt = std::chrono::steady_clock::now() - mPrevRecvdTime; 
 
             for (auto const& item : rigidBodies) 
             {
                 double roll, pitch, yaw;
                 const auto& rigidBody = item.second;
-                //std::cout << "    \"" << rigidBody.name() << "\":" << std::endl;
-
+                
                 if(rigidBody.name() == mRigidBodyName)
                 {
                     Eigen::Vector3f pos = rigidBody.position(); 
@@ -135,13 +136,6 @@ void OptitrackStateFetcher_LibMocap::listen()
                     mPrevRecvdTime = std::chrono::steady_clock::now();  
 
                 }
-
-                // TODO: remove after testing 
-                const auto& position = rigidBody.position();
-
-                //std::cout << "       position: [" << position(0) << ", " << position(1) << ", " << position(2) << "]" << std::endl;
-                //std::cout << "       rotation: [" << yaw << ", " << pitch << ", "
-                //                                  << roll << "]" << std::endl;
             }
         }
     }

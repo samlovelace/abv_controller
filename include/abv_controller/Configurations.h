@@ -12,26 +12,12 @@ struct StateMachineConfig
     std::string mControlMode;
     int mFrequency;
 };
-
-struct SocketConfig 
-{
-    std::string IP;
-    int CmdPort;
-    int DataPort;
-};
-
-struct NetworkConfig 
-{
-    SocketConfig Server;
-    SocketConfig Local;
-    SocketConfig Multicast;
-};
-
 struct StateTrackerConfig 
 {
     std::string mInterface;
     int mRate;
-    NetworkConfig mNetwork;
+    std::string mServerIp; 
+    std::string mLocalIp; 
     int mRigidBodyId; 
 };
 

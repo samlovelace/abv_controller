@@ -15,16 +15,20 @@ VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) :
 
     switch (typeToMake)
     {
-    case FetcherType::SIMULATED:
-        mStateFetcher = std::make_shared<SimulatedStateFetcher>(); 
-        LOGD << "Configuring ABV to use Simulated state feedback"; 
-        break;
-    case FetcherType::OPTITRACK: 
-        mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mNetwork, mConfig.mRigidBodyId, aRigidBodyName); 
-        LOGD << "Configuring ABV to use OptiTrack for state feedback"; 
-        break;
-    default:
-        break;
+        case FetcherType::SIMULATED:
+            
+            mStateFetcher = std::make_shared<SimulatedStateFetcher>(); 
+            LOGD << "Configuring ABV to use Simulated state feedback"; 
+            
+            break;
+        case FetcherType::OPTITRACK: 
+            
+            mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mServerIp, mConfig.mLocalIp, mConfig.mRigidBodyId, aRigidBodyName); 
+            LOGD << "Configuring ABV to use OptiTrack for state feedback"; 
+            
+            break;
+        default:
+            break;
     } 
 
     mStateTrackingThread = std::thread(&VehicleStateTracker::stateTrackerLoop, this); 
