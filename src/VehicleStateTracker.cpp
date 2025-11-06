@@ -66,7 +66,6 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
     return enumToReturn; 
 }
 
-// TODO: figure out what behavior we want for this. Constantly state tracking or able to stop and restart?
 void VehicleStateTracker::stateTrackerLoop()
 {  
     const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate);

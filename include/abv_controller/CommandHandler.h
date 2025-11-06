@@ -13,8 +13,6 @@ public:
     CommandHandler(std::shared_ptr<StateMachine> msm, std::shared_ptr<Vehicle> abv);
     ~CommandHandler();
 
-    // TODO: 
-    // this should probably be in the vehicle or state machine stuff
     enum class CommandType
     {
         THRUSTER, 
