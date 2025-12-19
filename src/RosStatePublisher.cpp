@@ -1,6 +1,7 @@
 
 #include "abv_controller/RosStatePublisher.h"
 #include "abv_controller/RosTopicManager.h"
+#include "abv_controller/RateController.hpp"
 #include <thread>
 #include <chrono> 
 #include "plog/Log.h"
@@ -27,31 +28,20 @@ RosStatePublisher::~RosStatePublisher()
 
 void RosStatePublisher::publishStateLoop()
 {
-    auto topicManager = RosTopicManager::getInstance(); 
-    const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate); 
+    auto topicManager = RosTopicManager::getInstance();
+    RateController rate(mConfig.mRate); 
 
     LOGD << "Starting ROS state publishing thread";
     setPublishingState(true); 
 
     while(shouldPublishState())
     {
-        auto loop_start = std::chrono::steady_clock::now();
+        rate.start(); 
 
         Eigen::Matrix<float, 12, 1> currentState = mStateTracker->getCurrentState(); 
         topicManager->publishMessage(mTopicName, convertToIdlMsg(currentState)); 
 
-        // execution frequency control here s
-        auto loop_end = std::chrono::steady_clock::now();
-        auto elapsed = loop_end - loop_start;
-
-        // Sleep for the remaining time to maintain the frequency
-        if (elapsed < loop_duration) {
-            std::this_thread::sleep_for(loop_duration - elapsed);
-        } else {
-            std::cerr << "Loop overrun! Elapsed time: " 
-                        << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-                        << " ms\n";
-        }
+        rate.block(); 
     }
 }
 

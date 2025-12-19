@@ -66,5 +66,9 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.stateTrackerConfig.mRate = stateTrackerNode["Rate"].as<int>(); 
     mConfigurations.vehicleConfig.stateTrackerConfig.mRigidBodyId = stateTrackerNode["RigidBodyId"].as<int>(); 
 
+    YAML::Node statePubNode = config["StatePublisher"]; 
+    mConfigurations.vehicleConfig.statePublisherConfig.mInterface = statePubNode["Interface"].as<std::string>(); 
+    mConfigurations.vehicleConfig.statePublisherConfig.mRate = statePubNode["Rate"].as<int>(); 
+
     return true; 
 }
