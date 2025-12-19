@@ -3,9 +3,9 @@
 #include "abv_controller/RosTopicManager.h"
 
 
-SimulatedStateFetcher::SimulatedStateFetcher(/* args */)
+SimulatedStateFetcher::SimulatedStateFetcher()
 {
-    
+    mAcquired.store(false);  
 }
 
 SimulatedStateFetcher::~SimulatedStateFetcher()
@@ -41,6 +41,8 @@ void SimulatedStateFetcher::stateCallback(robot_idl::msg::AbvState::SharedPtr aS
 
     // thread safe setting of state
     setState(state); 
+    if(!mAcquired.load())
+        mAcquired.store(true); 
 }
 
 void SimulatedStateFetcher::setState(Eigen::Matrix<float, 12, 1> aState)

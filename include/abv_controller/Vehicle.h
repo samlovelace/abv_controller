@@ -31,6 +31,8 @@ public:
 
     bool isControlInputStale(); 
 
+    bool hasAcquiredStateData(); 
+
 private:
     Eigen::Vector3d mGoalPose; 
     Eigen::Vector3d mGoalVelocity; 

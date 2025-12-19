@@ -13,15 +13,17 @@ public:
 
     enum class States
     {
+        STARTUP,
         IDLE, 
         THRUSTER_CONTROL, 
         POSE_CONTROL, 
         VELOCITY_CONTROL, 
         NUM_TYPES
     };
-    std::string toString(States aState); 
 
     void run(); 
+
+    std::string toString(States aState); 
 
     /** Getters and Setters **/
     bool isCommandedToStop() {std::lock_guard<std::mutex> lock(mDoneMutex); return mDone; }

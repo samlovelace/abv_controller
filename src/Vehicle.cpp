@@ -110,3 +110,9 @@ Eigen::Vector3d Vehicle::convertToBodyFrame(Eigen::Vector3d aControlInputGlobal)
     // Transform the vector into the new frame
     return Rz * aControlInputGlobal;
 }
+
+bool Vehicle::hasAcquiredStateData()
+{
+    // if state tracker is doing tracking, it has acquired state
+    return mStateTracker->doStateTracking(); 
+}

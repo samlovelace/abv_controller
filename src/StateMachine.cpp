@@ -7,7 +7,7 @@
 #include "plog/Log.h"
 
 StateMachine::StateMachine(std::shared_ptr<Vehicle> abv) : 
-    mDone(false), mActiveState(States::IDLE), mVehicle(abv)
+    mDone(false), mActiveState(States::STARTUP), mVehicle(abv)
 {
 }
 
@@ -28,6 +28,12 @@ void StateMachine::run()
 
         switch (getActiveState())
         {
+        case States::STARTUP: 
+            if(mVehicle->hasAcquiredStateData())
+            {
+                setActiveState(States::IDLE); 
+                break; 
+            }
         case States::IDLE:
             break;
 
@@ -80,6 +86,9 @@ std::string StateMachine::toString(StateMachine::States aState)
     std::string stringToReturn = ""; 
     switch (aState)
     {
+    case StateMachine::States::STARTUP:
+        stringToReturn = "STARTUP"; 
+        break; 
     case StateMachine::States::IDLE:
         stringToReturn = "IDLE"; 
         break;

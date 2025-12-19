@@ -32,6 +32,7 @@ VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) :
             break;
     } 
 
+    setStateTracking(false); 
     mStateTrackingThread = std::thread(&VehicleStateTracker::stateTrackerLoop, this); 
 }
 
@@ -77,7 +78,14 @@ void VehicleStateTracker::stateTrackerLoop()
         return; 
     }
     
-    LOGD << "Starting state tracking thread"; 
+    // wait until state is acquired 
+    while(!mStateFetcher->isStateAcquired())
+    {
+        LOGD << "Waiting for state data from " << mStateFetcher->type();
+        sleep(1); 
+    }
+
+    LOGD << "Starting state tracking thread";
     setStateTracking(true); 
 
     while(doStateTracking())

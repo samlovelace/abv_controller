@@ -31,6 +31,12 @@ void RosStatePublisher::publishStateLoop()
     auto topicManager = RosTopicManager::getInstance();
     RateController rate(mConfig.mRate); 
 
+    // wait until state data is available to publish 
+    while(!mStateTracker->doStateTracking())
+    {
+        sleep(1); 
+    }
+
     LOGD << "Starting ROS state publishing thread";
     setPublishingState(true); 
 

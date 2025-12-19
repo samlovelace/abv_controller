@@ -22,6 +22,7 @@ public:
 
     bool init() override;
     Eigen::Matrix<float, 12, 1> fetchState() override;  
+    std::string type() {return "OptiTrack"; }
 
 private:
 

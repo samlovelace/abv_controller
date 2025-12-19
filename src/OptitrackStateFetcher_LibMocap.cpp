@@ -9,7 +9,7 @@ OptitrackStateFetcher_LibMocap::OptitrackStateFetcher_LibMocap(const std::string
                                                                const std::string& aRigidBodyName) : 
     mID(aRigidBodyId), mRigidBodyName(aRigidBodyName), mServerIp(aServerIp), mLocalIp(aLocalIp)
 {
-
+    mAcquired.store(false);  
 }
 
 OptitrackStateFetcher_LibMocap::~OptitrackStateFetcher_LibMocap()
@@ -134,7 +134,8 @@ void OptitrackStateFetcher_LibMocap::listen()
                     setLatestState(state); 
                     mPrevState = state; 
                     mPrevRecvdTime = std::chrono::steady_clock::now();  
-
+                    if(!mAcquired.load())
+                        mAcquired.store(true); 
                 }
             }
         }
