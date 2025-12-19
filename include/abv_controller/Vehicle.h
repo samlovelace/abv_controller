@@ -25,12 +25,13 @@ public:
     void setGoalVelocity(Eigen::Vector3d aGoalVel); 
     void setControlInput(Eigen::Vector3d aControlInput); 
 
+    void stop(); 
+
     Eigen::Vector3d getGoalPose();
     Eigen::Vector3d getGoalVelocity(); 
     Eigen::Vector3d getControlInput(); 
 
     bool isControlInputStale(); 
-
     bool hasAcquiredStateData(); 
 
 private:

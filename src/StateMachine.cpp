@@ -29,23 +29,22 @@ void StateMachine::run()
         switch (getActiveState())
         {
         case States::STARTUP: 
+            
             if(mVehicle->hasAcquiredStateData())
             {
                 setActiveState(States::IDLE); 
                 break; 
             }
+
         case States::IDLE:
+            // do nothing 
             break;
 
         case States::THRUSTER_CONTROL:
 
             if(mVehicle->isControlInputStale())
             {
-                // set control input to zeros so we stop the thrusters
-                Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
-                mVehicle->setControlInput(zeros); 
-                mVehicle->doThrusterControl(); 
-
+                mVehicle->stop(); 
                 setActiveState(States::IDLE);
                 break; 
             }    

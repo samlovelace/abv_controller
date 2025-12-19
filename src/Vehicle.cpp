@@ -116,3 +116,10 @@ bool Vehicle::hasAcquiredStateData()
     // if state tracker is doing tracking, it has acquired state
     return mStateTracker->doStateTracking(); 
 }
+
+void Vehicle::stop()
+{
+    Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
+    setControlInput(zeros); 
+    doThrusterControl(); 
+}

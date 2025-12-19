@@ -25,7 +25,13 @@ CommandHandler::~CommandHandler()
 }
 
 void CommandHandler::commandCallback(robot_idl::msg::AbvCommand::SharedPtr aCmdMsg)
-{
+{   
+    if(CommandType::STOP == toEnum(aCmdMsg->type))
+    {
+        mVehicle->stop(); 
+        setNewActiveState(StateMachine::States::IDLE); 
+    }
+
     if(CommandType::THRUSTER == toEnum(aCmdMsg->type))
     {
         mVehicle->setControlInput(convertToEigen(aCmdMsg->data)); 
@@ -87,6 +93,10 @@ CommandHandler::CommandType CommandHandler::toEnum(const std::string& aType)
     {
         enumToReturn = CommandType::IDLE; 
     }
+    else if ("STOP" == aType || "stop" == aType || "Stop" == aType)
+    {
+        enumToReturn = CommandType::STOP; 
+    }
     else
     {
         printf("Unsupported CommandType: %s", aType.c_str()); 
@@ -113,6 +123,9 @@ std::string CommandHandler::toString(CommandType aCmdType)
     case CommandType::VELOCITY: 
         stringToReturn = "VELOCITY_CONTROL"; 
         break;
+    case CommandType::STOP: 
+        stringToReturn = "STOP"; 
+        break; 
     default:
         break;
     }
