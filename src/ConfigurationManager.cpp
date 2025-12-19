@@ -32,7 +32,7 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     LOGD << s.str();  
 
     // Parse StateMachine
-    mConfigurations.stateMachineConfig.mFrequency = config["StateMachine"]["Rate"].as<int>(); 
+    mConfigurations.stateMachineConfig.mRate = config["StateMachine"]["Rate"].as<int>(); 
 
     // Parse Vehicle
     YAML::Node vehicleNode = config["Vehicle"];

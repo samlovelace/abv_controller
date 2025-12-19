@@ -40,6 +40,7 @@ public:
     StatePublisherConfig getStatePublisherConfig() {return mConfigurations.vehicleConfig.statePublisherConfig;}
     ControllerConfig getControllerConfig() {return mConfigurations.vehicleConfig.controllerConfig;}
     VehicleConfig getVehicleConfig() {return mConfigurations.vehicleConfig; }
+    StateMachineConfig getStateMachineConfig() {return mConfigurations.stateMachineConfig;}
 
 private: 
     /**

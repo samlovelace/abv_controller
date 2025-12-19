@@ -2,6 +2,7 @@
 #include "abv_controller/VehicleStateTracker.h"
 #include "abv_controller/OptitrackStateFetcher_LibMocap.h"
 #include "abv_controller/SimulatedStateFetcher.h"
+#include "abv_controller/RateController.hpp"
 #include "plog/Log.h"
 #include <thread>
 
@@ -68,34 +69,24 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
 
 void VehicleStateTracker::stateTrackerLoop()
 {  
-    const std::chrono::duration<double> loop_duration(1.0 / mConfig.mRate);
+    RateController rate(mConfig.mRate); 
     
     if(!mStateFetcher->init())
     {
         LOGE << "Could not initialize state fetcher of type: " << mConfig.mInterface; 
         return; 
     }
+    
     LOGD << "Starting state tracking thread"; 
     setStateTracking(true); 
 
     while(doStateTracking())
     {
-        auto start = std::chrono::steady_clock::now(); 
+        rate.start(); 
 
         auto state = mStateFetcher->fetchState();
         setCurrentState(state); 
 
-        // Calculate the time taken for the loop iteration
-        auto loop_end = std::chrono::steady_clock::now();
-        auto elapsed = loop_end - start;
-
-        // Sleep for the remaining time to maintain the frequency
-        if (elapsed < loop_duration) {
-            std::this_thread::sleep_for(loop_duration - elapsed);
-        } else {
-            LOGE << "Loop overrun! Elapsed time: " 
-                      << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-                      << " ms\n";
-        }
+        rate.block(); 
     }
 }

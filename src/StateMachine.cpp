@@ -1,5 +1,7 @@
 
 #include "abv_controller/StateMachine.h"
+#include "abv_controller/RateController.hpp"
+#include "abv_controller/ConfigurationManager.h"
 #include <thread>
 #include <iostream> 
 #include "plog/Log.h"
@@ -15,16 +17,14 @@ StateMachine::~StateMachine()
 
 void StateMachine::run()
 {
-    // Desired frequency in Hz
-    const double frequency = 10.0;
-    // Calculate the loop duration
-    const std::chrono::duration<double> loop_duration(1.0 / frequency);
+    auto config = ConfigurationManager::getInstance()->getStateMachineConfig(); 
+    RateController rate(config.mRate); 
 
     LOGD << "State Machine starting in " << toString(mActiveState);
 
     while(!isCommandedToStop())
     {
-        auto loop_start = std::chrono::steady_clock::now(); 
+        rate.start(); 
 
         switch (getActiveState())
         {
@@ -62,19 +62,7 @@ void StateMachine::run()
             break;
         }
 
-        // Calculate the time taken for the loop iteration
-        auto loop_end = std::chrono::steady_clock::now();
-        auto elapsed = loop_end - loop_start;
-
-        // Sleep for the remaining time to maintain the frequency
-        if (elapsed < loop_duration) {
-            std::this_thread::sleep_for(loop_duration - elapsed);
-        } else {
-            LOGE << "Loop overrun! Elapsed time: " 
-                      << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count()
-                      << " ms\n";
-        }
-
+        rate.block(); 
     }
 }
 

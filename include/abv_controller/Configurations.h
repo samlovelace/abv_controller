@@ -8,8 +8,7 @@
 #include <plog/Log.h>
 struct StateMachineConfig 
 {
-    std::string mControlMode;
-    int mFrequency;
+    int mRate;
 };
 struct StateTrackerConfig 
 {
