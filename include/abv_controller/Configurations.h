@@ -6,7 +6,6 @@
 #include <eigen3/Eigen/Dense>
 #include <yaml-cpp/yaml.h>
 #include <plog/Log.h>
-
 struct StateMachineConfig 
 {
     std::string mControlMode;
@@ -20,13 +19,11 @@ struct StateTrackerConfig
     std::string mLocalIp; 
     int mRigidBodyId; 
 };
-
 struct StatePublisherConfig 
 {
     std::string mInterface; 
     int mRate; 
 };
-
 struct ThrusterConfig 
 {
     double uOn;
@@ -34,7 +31,6 @@ struct ThrusterConfig
     std::string mType; 
     std::vector<int> mGpioPins; 
 };
-
 struct ControllerConfig 
 {
     Eigen::Vector3d Kp;
@@ -42,7 +38,6 @@ struct ControllerConfig
     Eigen::Vector3d Kd;
     ThrusterConfig thrusterConfig;
 };
-
 struct VehicleConfig 
 {
     std::string Name;
@@ -55,13 +50,11 @@ struct VehicleConfig
     StatePublisherConfig statePublisherConfig; 
     ControllerConfig controllerConfig;
 };
-
 struct Configurations 
 {
     StateMachineConfig stateMachineConfig;
     VehicleConfig vehicleConfig;
 };
-
 namespace ConfigUtils
 {
     static Eigen::Vector3d parseVector3d(const YAML::Node& node) 
