@@ -38,6 +38,7 @@ set(ABV_CONTROLLER_SOURCES
   src/CommandHandler.cpp
   src/ConfigurationManager.cpp
   src/Controller.cpp
+  src/DataLogger.cpp
   src/main.cpp 
   src/OptitrackStateFetcher_LibMocap.cpp
   src/RosStatePublisher.cpp

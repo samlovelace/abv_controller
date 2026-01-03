@@ -3,14 +3,33 @@
 #include "abv_controller/CommandHandler.h"
 #include "abv_controller/StateMachine.h"
 #include "abv_controller/Vehicle.h"
-#include "abv_controller/Logger.h"
+#include "abv_controller/DataLogger.h"
 #include "abv_controller/ConfigurationManager.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
+
+// Signal handler function
+void signalHandler(int signal) {
+
+    LOGD  << "\n" << "\t\t"
+	  R"(_________________________
+		|                       |
+		|   SHUTTING DOWN...    |
+		|_______________________|
+               __   /
+              / o) /
+     _.----._/ /
+    /         /
+ __/ (  | (  |
+/__.-'|_|--|_|
+)";
+    exit(0); // Exit the program
+}
+
 
 int main()
 {
     std::signal(SIGINT, signalHandler); 
-    createLogger(); 
+    DataLogger::get().createMainLog(); 
 
     std::string configFilePath = ament_index_cpp::get_package_share_directory("abv_controller") + "/configuration/config.yaml"; 
 

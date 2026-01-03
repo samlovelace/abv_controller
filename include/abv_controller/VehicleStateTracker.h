@@ -51,6 +51,8 @@ private:
 
     VehicleStateTracker::FetcherType toEnum(std::string aTrackerType);
     void setCurrentState(const Eigen::Matrix<float, 12, 1>& aState) { std::scoped_lock lock(mCurrentStateMutex); mCurrentState = aState; }
+    
+    std::vector<double> toVector(const Eigen::Matrix<float, 12, 1>& aState);
 
 };
 #endif // VEHICLESTATETRACKER_H

@@ -3,8 +3,10 @@
 #include "abv_controller/OptitrackStateFetcher_LibMocap.h"
 #include "abv_controller/SimulatedStateFetcher.h"
 #include "abv_controller/RateController.hpp"
+#include "abv_controller/DataLogger.h"
 #include "plog/Log.h"
 #include <thread>
+
 
 using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap; 
 
@@ -85,6 +87,8 @@ void VehicleStateTracker::stateTrackerLoop()
         sleep(1); 
     }
 
+    auto logId = DataLogger::get().createLog("Navigation"); 
+
     LOGD << "Starting state tracking thread";
     setStateTracking(true); 
 
@@ -94,7 +98,21 @@ void VehicleStateTracker::stateTrackerLoop()
 
         auto state = mStateFetcher->fetchState();
         setCurrentState(state); 
+        DataLogger::get().write(logId, toVector(state)); 
 
         rate.block(); 
     }
+}
+
+std::vector<double> VehicleStateTracker::toVector(const Eigen::Matrix<float, 12, 1>& aState)
+{
+    std::vector<double> state;
+    state.resize(aState.size());  
+
+    for(int i = 0; i < aState.size(); i++)
+    {
+        state[i] = aState[i]; 
+    }
+
+    return state; 
 }
