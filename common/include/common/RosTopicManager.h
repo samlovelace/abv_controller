@@ -8,9 +8,9 @@ class RosTopicManager : public rclcpp::Node
 
 public:
 
-    static RosTopicManager* getInstance()
+    static RosTopicManager* getInstance(const std::string& aNodeName = "Default")
     {
-        static RosTopicManager instance;
+        static RosTopicManager instance(aNodeName);
         return &instance;
     }
 
@@ -72,7 +72,7 @@ public:
 
 private:
 
-    RosTopicManager(/* args */);
+    RosTopicManager(const std::string& aNodeName);
     ~RosTopicManager();
 
     std::map<std::string, rclcpp::PublisherBase::SharedPtr> mPublishers;

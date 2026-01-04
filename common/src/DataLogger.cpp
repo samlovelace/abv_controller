@@ -19,7 +19,7 @@
 
 #include "common/DataLogger.h"
 
-void DataLogger::createMainLog() 
+void DataLogger::createMainLog(const std::string& aMainLogKey) 
 {
     if(mMainLogCreated)
     {
@@ -55,7 +55,7 @@ void DataLogger::createMainLog()
     std::ostringstream timeSS;
     timeSS << std::put_time(std::localtime(&now_time_t), "%H_%M_") << std::setw(2) << std::setfill('0') << seconds.count();
     mMainLogTimestamp = timeSS.str(); 
-    std::string logFileName = "ABV_Controller_Log_" + mMainLogTimestamp + ".csv";
+    std::string logFileName = "abv_" + aMainLogKey + "_log_" + mMainLogTimestamp + ".csv";
     
     // Full paths for log files
     std::string logFilePath = mMainLogDir + "/" + logFileName;

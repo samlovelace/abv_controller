@@ -1,8 +1,9 @@
 
 #include "common/RosTopicManager.h"
 
-RosTopicManager::RosTopicManager(/* args */) : Node("ABV_Controller")
+RosTopicManager::RosTopicManager(const std::string& aNodeName) : Node(aNodeName)
 {
+    
 }
 
 RosTopicManager::~RosTopicManager()

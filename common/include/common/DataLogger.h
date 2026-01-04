@@ -21,7 +21,7 @@ public:
         return instance; 
     }
 
-    void createMainLog();
+    void createMainLog(const std::string& aMainLogKey);
 
     LogId createLog(const std::string& aLogFileName); 
     void write(LogId, const std::string& aLineToWrite);
