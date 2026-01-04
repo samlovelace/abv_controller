@@ -2,8 +2,8 @@
 #include "abv_controller/VehicleStateTracker.h"
 #include "abv_controller/OptitrackStateFetcher_LibMocap.h"
 #include "abv_controller/SimulatedStateFetcher.h"
-#include "abv_controller/RateController.hpp"
-#include "abv_controller/DataLogger.h"
+#include "common/RateController.hpp"
+#include "common/DataLogger.h"
 #include "plog/Log.h"
 #include <thread>
 

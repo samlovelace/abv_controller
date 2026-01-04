@@ -1,6 +1,6 @@
 
 #include "abv_controller/SimulatedStateFetcher.h"
-#include "abv_controller/RosTopicManager.h"
+#include "common/RosTopicManager.h"
 
 
 SimulatedStateFetcher::SimulatedStateFetcher()

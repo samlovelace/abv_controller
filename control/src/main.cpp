@@ -3,7 +3,7 @@
 #include "abv_controller/CommandHandler.h"
 #include "abv_controller/StateMachine.h"
 #include "abv_controller/Vehicle.h"
-#include "abv_controller/DataLogger.h"
+#include "common/DataLogger.h"
 #include "abv_controller/ConfigurationManager.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 

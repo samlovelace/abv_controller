@@ -35,11 +35,9 @@ set(ABV_CONTROLLER_SOURCES
   src/CommandHandler.cpp
   src/ConfigurationManager.cpp
   src/Controller.cpp
-  src/DataLogger.cpp
   src/main.cpp 
   src/OptitrackStateFetcher_LibMocap.cpp
   src/RosStatePublisher.cpp
-  src/RosTopicManager.cpp
   src/SimulatedStateFetcher.cpp
   src/StateMachine.cpp
   src/ThrusterCommander.cpp
@@ -58,13 +56,17 @@ elseif(ARCH_ARM)
 		src/GpioThrusterDriver.cpp)
 endif()
 
+# include the common dir cmake file
+include(${CMAKE_CURRENT_LIST_DIR}/../common/CMakeLists.txt)
+
 # Create executable
-add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
+add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES} ${COMMON_SOURCES})
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/include
-	${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
+  ${COMMON_INCLUDE_DIR}
+	${CMAKE_CURRENT_LIST_DIR}/../dependencies/plog/plog-master/include
 	${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture/include
 	${EIGEN3_INCLUDE_DIRS}
 )

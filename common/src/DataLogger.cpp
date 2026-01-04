@@ -17,9 +17,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 
-#include "abv_controller/DataLogger.h"
-
-
+#include "common/DataLogger.h"
 
 void DataLogger::createMainLog() 
 {
