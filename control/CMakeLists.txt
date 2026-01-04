@@ -6,11 +6,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Shared library lookup behavior
-#set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-#set(CMAKE_INSTALL_RPATH "$ORIGIN")
-#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 # Packages
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -19,7 +14,9 @@ find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
-add_subdirectory(dependencies/libmotioncapture)
+add_subdirectory(
+  ${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture libmotioncapture
+)
 
 # Architecture detection
 set(ARCH_X86 FALSE)
@@ -68,7 +65,7 @@ add_executable(${PROJECT_NAME} ${ABV_CONTROLLER_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/include
 	${CMAKE_CURRENT_LIST_DIR}/include/plog/plog-master/include
-	${CMAKE_CURRENT_LIST_DIR}/dependencies/libmotioncapture/include
+	${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture/include
 	${EIGEN3_INCLUDE_DIRS}
 )
 
@@ -96,10 +93,10 @@ endif()
 
 # Install
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
-install(DIRECTORY configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
+install(DIRECTORY ../configuration/ DESTINATION share/${PROJECT_NAME}/configuration)
 
 install(
-  PROGRAMS run.sh
+  PROGRAMS ../run.sh
   DESTINATION bin
 )
 
