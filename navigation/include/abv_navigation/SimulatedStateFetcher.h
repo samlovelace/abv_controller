@@ -1,7 +1,7 @@
 #ifndef SIMULATEDSTATEFETCHER_H
 #define SIMULATEDSTATEFETCHER_H 
 
-#include "abv_controller/IStateFetcher.h"
+#include "abv_navigation/IStateFetcher.h"
 #include "robot_idl/msg/abv_state.hpp"
 
 class SimulatedStateFetcher : public IStateFetcher

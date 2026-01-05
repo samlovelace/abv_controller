@@ -1,7 +1,7 @@
 
-#include "abv_controller/VehicleStateTracker.h"
-#include "abv_controller/OptitrackStateFetcher_LibMocap.h"
-#include "abv_controller/SimulatedStateFetcher.h"
+#include "abv_navigation/VehicleStateTracker.h"
+#include "abv_navigation/OptitrackStateFetcher_LibMocap.h"
+#include "abv_navigation/SimulatedStateFetcher.h"
 #include "common/RateController.hpp"
 #include "common/DataLogger.h"
 #include "plog/Log.h"
@@ -70,7 +70,7 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
     return enumToReturn; 
 }
 
-void VehicleStateTracker::stateTrackerLoop()
+void VehicleStateTracker::run()
 {  
     RateController rate(mConfig.mRate); 
     

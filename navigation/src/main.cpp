@@ -4,6 +4,7 @@
 #include "common/DataLogger.h"
 #include "common/SignalHandler.hpp"
 #include "common/ConfigurationManager.h"
+#include "abv_navigation/VehicleStateTracker.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 int main()
@@ -23,11 +24,8 @@ int main()
     rclcpp::init(0, nullptr);
     RosTopicManager::getInstance("abv_navigation"); 
 
-    while(true)
-    {
-        LOGD << "Nav";
-        sleep(1); 
-    }
+    VehicleStateTracker stateTracker("abv");
+    stateTracker.run(); 
 
     rclcpp::shutdown(); 
 }

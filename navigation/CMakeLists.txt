@@ -14,12 +14,16 @@ find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
+set(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE OFF CACHE BOOL "Dont Use NatNetSDK at all")
 add_subdirectory(
   ${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture libmotioncapture
 )
 
 set(SOURCES
-    src/main.cpp
+	src/OptitrackStateFetcher_LibMocap.cpp
+	src/SimulatedStateFetcher.cpp
+	src/VehicleStateTracker.cpp
+	src/main.cpp
 )
 
 include(${CMAKE_CURRENT_LIST_DIR}/../common/CMakeLists.txt)
@@ -29,6 +33,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     include
     ${COMMON_INCLUDE_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../dependencies/plog/plog-master/include
+	${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture/include
+	${EIGEN3_INCLUDE_DIRS}
 )
 
 # Dependencies
@@ -38,7 +44,7 @@ ament_target_dependencies(${PROJECT_NAME}
   Eigen3
 )
 
-target_link_libraries(${PROJECT_NAME} yaml-cpp)
+target_link_libraries(${PROJECT_NAME} yaml-cpp libmotioncapture)
 # Install
 install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 

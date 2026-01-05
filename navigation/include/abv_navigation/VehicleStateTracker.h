@@ -1,9 +1,9 @@
 #ifndef VEHICLESTATETRACKER_H
 #define VEHICLESTATETRACKER_H
 
-#include "IStateFetcher.h"
-#include "Configurations.h"
-#include "ConfigurationManager.h"
+#include "abv_navigation/IStateFetcher.h"
+#include "common/Configurations.h"
+#include "common/ConfigurationManager.h"
 #include <memory>
 #include <thread> 
 
@@ -21,7 +21,7 @@ public:
         NUM_TYPES
     };
 
-    void stateTrackerLoop(); 
+    void run(); 
 
     Eigen::Vector3d getCurrentPose() { std::lock_guard<std::mutex> lock(mCurrentPoseMutex); return mCurrentPose; }
     Eigen::Vector3d getCurrentVelocity() {std::lock_guard<std::mutex> lock(mCurrentVelocityMutex); return mCurrentVelocity; }

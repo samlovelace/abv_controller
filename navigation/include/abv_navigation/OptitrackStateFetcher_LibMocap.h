@@ -5,8 +5,8 @@
 #include <memory>
 #include <thread> 
 
-#include "ConfigurationManager.h"
-#include "Configurations.h" 
+#include "common/ConfigurationManager.h"
+#include "common/Configurations.h" 
 
 #include "libmotioncapture/motioncapture.h"
 
