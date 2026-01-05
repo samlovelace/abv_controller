@@ -1,7 +1,7 @@
 
 #include "abv_controller/StateMachine.h"
 #include "common/RateController.hpp"
-#include "abv_controller/ConfigurationManager.h"
+#include "common/ConfigurationManager.h"
 #include <thread>
 #include <iostream> 
 #include "plog/Log.h"

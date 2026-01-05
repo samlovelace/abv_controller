@@ -2,7 +2,7 @@
 #define CONTROLLER_H
  
 #include <eigen3/Eigen/Dense> 
-#include <abv_controller/Configurations.h>
+#include "common/Configurations.h"
 #include <chrono> 
  
 class Controller 

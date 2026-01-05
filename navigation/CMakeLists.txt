@@ -13,6 +13,11 @@ find_package(robot_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
+add_subdirectory(
+  ${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture libmotioncapture
+)
+
 set(SOURCES
     src/main.cpp
 )

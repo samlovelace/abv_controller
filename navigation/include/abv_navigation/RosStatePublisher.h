@@ -1,15 +1,15 @@
 #ifndef ROSSTATEPUBLISHER_H
 #define ROSSTATEPUBLISHER_H
 
-#include "abv_controller/Configurations.h"
-#include "abv_controller/VehicleStateTracker.h"
+#include "common/Configurations.h"
+#include "abv_controller/NavigationManager.h"
 #include "robot_idl/msg/abv_state.hpp"
 #include <thread> 
 
 class RosStatePublisher
 {
 public:
-    RosStatePublisher(std::shared_ptr<VehicleStateTracker> aStateTracker);
+    RosStatePublisher(std::shared_ptr<NavigationManager> aStateTracker);
     ~RosStatePublisher();
 
     void publishStateLoop(); 

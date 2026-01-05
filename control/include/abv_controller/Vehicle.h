@@ -5,8 +5,7 @@
 #include <mutex> 
 #include <memory>
 #include "abv_controller/ThrusterCommander.h"
-#include "abv_controller/VehicleStateTracker.h"
-#include "abv_controller/RosStatePublisher.h"
+#include "abv_controller/NavigationManager.h"
 #include "abv_controller/Controller.h"
 
 class Vehicle
@@ -46,8 +45,7 @@ private:
     std::mutex mGoalVelocityMutex;
 
     std::unique_ptr<ThrusterCommander> mThrusterCommander;
-    std::shared_ptr<VehicleStateTracker> mStateTracker; 
-    std::unique_ptr<RosStatePublisher> mStatePublisher; 
+    std::shared_ptr<NavigationManager> mStateTracker;
     std::unique_ptr<Controller> mController; 
 
 private: 

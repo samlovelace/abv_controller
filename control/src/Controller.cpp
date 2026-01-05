@@ -1,6 +1,6 @@
 
 #include "abv_controller/Controller.h"
-#include "abv_controller/ConfigurationManager.h"
+#include "common/ConfigurationManager.h"
 
 Controller::Controller() : mConfig(ConfigurationManager::getInstance()->getControllerConfig())
 {

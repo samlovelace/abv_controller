@@ -5,7 +5,7 @@
 #include "abv_controller/Vehicle.h"
 #include "common/DataLogger.h"
 #include "common/SignalHandler.hpp"
-#include "abv_controller/ConfigurationManager.h"
+#include "common/ConfigurationManager.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 int main()
@@ -16,7 +16,6 @@ int main()
     DataLogger::get().createMainLog("controller");
 
     std::string configFilePath = ament_index_cpp::get_package_share_directory("abv_controller") + "/configuration/config.yaml"; 
-
     if(!ConfigurationManager::getInstance()->loadConfiguration(configFilePath))
     {
         printf("Could not load config file at %s\n", configFilePath.c_str()); 

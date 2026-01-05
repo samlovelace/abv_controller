@@ -13,11 +13,6 @@ find_package(robot_idl REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libmotioncapture")
-add_subdirectory(
-  ${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture libmotioncapture
-)
-
 # Architecture detection
 set(ARCH_X86 FALSE)
 set(ARCH_ARM FALSE)
@@ -33,18 +28,14 @@ endif()
 # Source files (common)
 set(ABV_CONTROLLER_SOURCES 
   src/CommandHandler.cpp
-  src/ConfigurationManager.cpp
   src/Controller.cpp
   src/main.cpp 
-  src/OptitrackStateFetcher_LibMocap.cpp
-  src/RosStatePublisher.cpp
-  src/SimulatedStateFetcher.cpp
+  src/NavigationManager.cpp
   src/StateMachine.cpp
   src/ThrusterCommander.cpp
   src/UdpClient.cpp
   src/UdpThrusterDriver.cpp
   src/Vehicle.cpp
-  src/VehicleStateTracker.cpp
 )
 
 # Conditionally include architecture dependent sources
@@ -67,7 +58,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/include
   ${COMMON_INCLUDE_DIR}
 	${CMAKE_CURRENT_LIST_DIR}/../dependencies/plog/plog-master/include
-	${CMAKE_CURRENT_LIST_DIR}/../dependencies/libmotioncapture/include
 	${EIGEN3_INCLUDE_DIRS}
 )
 
@@ -84,7 +74,7 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} yaml-cpp libmotioncapture)
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
 if(ARCH_ARM)
 	# manually set because it doesnt use cmake 
