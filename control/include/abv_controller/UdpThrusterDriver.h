@@ -2,7 +2,7 @@
 #define UDPTHRUSTERDRIVER_H
 
 #include "IThrusterDriver.hpp"
-#include "UdpClient.h"
+#include "common/UdpClient.h"
 #include <vector> 
 
 class UdpThrusterDriver : public IThrusterDriver

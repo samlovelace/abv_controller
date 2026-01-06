@@ -33,16 +33,12 @@ set(ABV_CONTROLLER_SOURCES
   src/NavigationManager.cpp
   src/StateMachine.cpp
   src/ThrusterCommander.cpp
-  src/UdpClient.cpp
   src/UdpThrusterDriver.cpp
   src/Vehicle.cpp
 )
 
 # Conditionally include architecture dependent sources
-if(ARCH_X86)
-	list(APPEND ABV_CONTROLLER_SOURCES 
-		src/DummyThrusterDriver.cpp)
-elseif(ARCH_ARM)
+if(ARCH_ARM)
 	list(APPEND ABV_CONTROLLER_SOURCES 
 		src/GpioThrusterDriver.cpp)
 endif()

@@ -4,7 +4,6 @@
 #include <eigen3/Eigen/Dense>
 #include "common/Configurations.h"
 #include "common/ConfigurationManager.h"
-#include "abv_controller/UdpClient.h"
 #include "abv_controller/IThrusterDriver.hpp"
 
 #include <mutex> 
@@ -26,8 +25,6 @@ protected:
     std::string mThrusterCommand; 
     std::mutex mThrusterCommandMutex;
     Eigen::Matrix<int, 3, 27> mMatrixOfThrustDirCombinations; 
-
-    std::unique_ptr<UdpClient> mUdpClient; 
 
     std::unique_ptr<IThrusterDriver> mThrusterDriver; 
 
