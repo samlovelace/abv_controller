@@ -4,6 +4,7 @@
 #include "abv_navigation/IStateFetcher.h"
 #include "common/Configurations.h"
 #include "common/ConfigurationManager.h"
+#include "RosStatePublisher.h"
 #include <memory>
 #include <thread> 
 
@@ -21,12 +22,7 @@ public:
         NUM_TYPES
     };
 
-    void run(); 
-
-    Eigen::Vector3d getCurrentPose() { std::lock_guard<std::mutex> lock(mCurrentPoseMutex); return mCurrentPose; }
-    Eigen::Vector3d getCurrentVelocity() {std::lock_guard<std::mutex> lock(mCurrentVelocityMutex); return mCurrentVelocity; }
-
-    Eigen::Matrix<float, 12, 1> getCurrentState() { std::scoped_lock lock(mCurrentStateMutex); return mCurrentState; }
+    void stateTrackerLoop(); 
 
     bool doStateTracking() {std::lock_guard<std::mutex> lock(mStateTrackingMutex); return mDoStateTracking; }
     void setStateTracking(bool aFlag) {std::lock_guard<std::mutex> lock(mStateTrackingMutex); mDoStateTracking = aFlag; }
@@ -34,24 +30,15 @@ public:
 private:
     // polymorphic state fetcher interface so we arent tied to optiTrack
     std::shared_ptr<IStateFetcher> mStateFetcher; // state fetcher interface class 
+    RosStatePublisher mStatePublisher; 
     StateTrackerConfig mConfig; 
 
     bool mDoStateTracking;
 
-    Eigen::Vector3d mCurrentPose;
-    Eigen::Vector3d mCurrentVelocity;
-    Eigen::Matrix<float, 12, 1> mCurrentState;
-
-    std::mutex mCurrentStateMutex;
-    std::mutex mCurrentPoseMutex;
-    std::mutex mCurrentVelocityMutex;
     std::mutex mStateTrackingMutex; 
-
     std::thread mStateTrackingThread;  
 
     VehicleStateTracker::FetcherType toEnum(std::string aTrackerType);
-    void setCurrentState(const Eigen::Matrix<float, 12, 1>& aState) { std::scoped_lock lock(mCurrentStateMutex); mCurrentState = aState; }
-    
     std::vector<double> toVector(const Eigen::Matrix<float, 12, 1>& aState);
 
 };

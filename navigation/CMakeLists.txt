@@ -21,6 +21,7 @@ add_subdirectory(
 
 set(SOURCES
 	src/OptitrackStateFetcher_LibMocap.cpp
+  src/RosStatePublisher.cpp
 	src/SimulatedStateFetcher.cpp
 	src/VehicleStateTracker.cpp
 	src/main.cpp

@@ -2,58 +2,28 @@
 #include "common/RosTopicManager.h"
 #include "common/RateController.hpp"
 
-#include "abv_controller/RosStatePublisher.h"
+#include "abv_navigation/RosStatePublisher.h"
 
 #include <thread>
 #include <chrono> 
 #include "plog/Log.h"
 
-RosStatePublisher::RosStatePublisher(std::shared_ptr<VehicleStateTracker> aStateTracker) : 
-    mStateTracker(aStateTracker), mConfig(ConfigurationManager::getInstance()->getStatePublisherConfig()), 
-    mTopicName("abv/state")
+RosStatePublisher::RosStatePublisher() : mTopicName("abv/state")
 {
     RosTopicManager::getInstance()->createPublisher<robot_idl::msg::AbvState>(mTopicName);
-    mStatePublishThread = std::thread(&RosStatePublisher::publishStateLoop, this); 
 }
 
 RosStatePublisher::~RosStatePublisher()
 {
-    // worst case this gets called here 
-    setPublishingState(false); 
-    
-    if(mStatePublishThread.joinable())
-    {
-        LOGD << "Joining state publishing thread"; 
-        mStatePublishThread.join(); 
-    }
+
 }
 
-void RosStatePublisher::publishStateLoop()
+void RosStatePublisher::publish(const Eigen::Matrix<float, 12, 1>& aState)
 {
-    auto topicManager = RosTopicManager::getInstance();
-    RateController rate(mConfig.mRate); 
-
-    // wait until state data is available to publish 
-    while(!mStateTracker->doStateTracking())
-    {
-        sleep(1); 
-    }
-
-    LOGD << "Starting ROS state publishing thread";
-    setPublishingState(true); 
-
-    while(shouldPublishState())
-    {
-        rate.start(); 
-
-        Eigen::Matrix<float, 12, 1> currentState = mStateTracker->getCurrentState(); 
-        topicManager->publishMessage(mTopicName, convertToIdlMsg(currentState)); 
-
-        rate.block(); 
-    }
+    RosTopicManager::getInstance()->publishMessage<robot_idl::msg::AbvState>(mTopicName, convertToIdlMsg(aState)); 
 }
 
-robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(Eigen::Matrix<float, 12, 1> aStateVector)
+robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(const Eigen::Matrix<float, 12, 1>& aStateVector)
 {
     robot_idl::msg::Vec3 position; 
     robot_idl::msg::Vec3 velocity;

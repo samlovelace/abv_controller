@@ -45,7 +45,7 @@ private:
     std::mutex mGoalVelocityMutex;
 
     std::unique_ptr<ThrusterCommander> mThrusterCommander;
-    std::shared_ptr<NavigationManager> mStateTracker;
+    std::shared_ptr<NavigationManager> mNavManager;
     std::unique_ptr<Controller> mController; 
 
 private: 

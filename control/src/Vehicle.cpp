@@ -5,7 +5,7 @@
 
 
 Vehicle::Vehicle(/* args */) : 
-    mStateTracker(std::make_shared<NavigationManager>()), mController(std::make_unique<Controller>()),
+    mNavManager(std::make_shared<NavigationManager>()), mController(std::make_unique<Controller>()),
     mLastInputRecvdAt(std::chrono::steady_clock::now()), mStaleInputThreshold(std::chrono::duration<double>(std::chrono::milliseconds(500)))
 {
 }
@@ -29,8 +29,7 @@ void Vehicle::doThrusterControl()
 
 void Vehicle::doPoseControl()
 { 
-    auto state = mStateTracker->getCurrentState(); 
-    auto currentPose = Eigen::Vector3d(state[0], state[1], state[6]);
+    Eigen::Vector3d currentPose = mNavManager->getCurrentPose();
 
     Eigen::Vector3d poseError = getGoalPose() - currentPose; 
     Eigen::Vector3d controlInput = mController->computeControlInput(poseError); 
@@ -41,8 +40,7 @@ void Vehicle::doPoseControl()
 
 void Vehicle::doVelocityControl()
 {
-    auto state = mStateTracker->getCurrentState(); 
-    auto currentVel = Eigen::Vector3d(state[3], state[4], state[9]);  
+    Eigen::Vector3d currentVel = mNavManager->getCurrentVel();
 
     Eigen::Vector3d velError = getGoalVelocity() - currentVel; 
     Eigen::Vector3d controlInput = mController->computeControlInput(velError); 
@@ -95,7 +93,7 @@ bool Vehicle::isControlInputStale()
 
 Eigen::Vector3d Vehicle::convertToBodyFrame(Eigen::Vector3d aControlInputGlobal)
 {   
-    auto state = mStateTracker->getCurrentState();
+    auto state = mNavManager->getCurrentState();
 
     // yaw is element 6 
     double yaw = state[6]; 
@@ -112,8 +110,7 @@ Eigen::Vector3d Vehicle::convertToBodyFrame(Eigen::Vector3d aControlInputGlobal)
 
 bool Vehicle::hasAcquiredStateData()
 {
-    // if state tracker is doing tracking, it has acquired state
-    return mStateTracker->doStateTracking(); 
+    return mNavManager->hasAcquiredStateData(); 
 }
 
 void Vehicle::stop()

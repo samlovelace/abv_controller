@@ -8,19 +8,24 @@
 class NavigationManager
 {
 public:
-    NavigationManager(/* args */);
+    NavigationManager();
     ~NavigationManager();
 
-    bool doStateTracking() { return false; }
-    Eigen::Matrix<float, 12, 1> getCurrentState() { std::scoped_lock lock(mCurrentStateMutex); return mCurrentState; }
+    Eigen::Vector3d getCurrentPose(); 
+    Eigen::Vector3d getCurrentVel(); 
 
+    bool hasAcquiredStateData(); 
+    Eigen::Matrix<double, 12, 1> getCurrentState();
+    void setState(const Eigen::Matrix<double, 12, 1>& aState); 
 
 private: 
 
     void stateCallback(const robot_idl::msg::AbvState::SharedPtr aMsg); 
 
-    Eigen::Matrix<float, 12, 1> mCurrentState; 
+    Eigen::Matrix<double, 12, 1> mCurrentState; 
     std::mutex mCurrentStateMutex; 
+
+    bool mAcquiredState; 
 };
 #endif 
 

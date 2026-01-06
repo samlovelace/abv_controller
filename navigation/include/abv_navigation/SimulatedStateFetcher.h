@@ -22,8 +22,6 @@ private:
 private: 
     
     std::mutex mStateMutex;
-
-
 };
 
 #endif // SIMULATEDSTATEFETCHER_H

@@ -11,19 +11,12 @@ public:
     RosStatePublisher();
     ~RosStatePublisher();
 
-    void publishStateLoop(); 
-    bool shouldPublishState() {std::lock_guard<std::mutex> lock(mShouldPublishStateMutex); return mShouldPublishState; }
-    void setPublishingState(bool aFlag) {std::lock_guard<std::mutex> lock(mShouldPublishStateMutex); mShouldPublishState = aFlag; }
+    void publish(const Eigen::Matrix<float, 12, 1>& aState); 
 
 private:
-    StatePublisherConfig mConfig; 
-    std::shared_ptr<VehicleStateTracker> mStateTracker; 
-    std::thread mStatePublishThread; 
-    bool mShouldPublishState; 
-    std::mutex mShouldPublishStateMutex; 
+    
     std::string mTopicName; 
-
-    robot_idl::msg::AbvState convertToIdlMsg(Eigen::Matrix<float, 12, 1> aStateVector); 
+    robot_idl::msg::AbvState convertToIdlMsg(const Eigen::Matrix<float, 12, 1>& aStateVector); 
 };
 
 #endif // ROSSTATEPUBLISHER_H

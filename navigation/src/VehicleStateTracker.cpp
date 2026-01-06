@@ -7,12 +7,10 @@
 #include "plog/Log.h"
 #include <thread>
 
-
 using OptitrackStateFetcher = OptitrackStateFetcher_LibMocap; 
 
 VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) : 
-            mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig()), 
-            mCurrentState(Eigen::VectorXf::Zero(12))
+            mConfig(ConfigurationManager::getInstance()->getStateTrackerConfig())
 {
     FetcherType typeToMake = toEnum(mConfig.mInterface); 
 
@@ -21,18 +19,18 @@ VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) :
         case FetcherType::SIMULATED:
             
             mStateFetcher = std::make_shared<SimulatedStateFetcher>(); 
-            LOGD << "Configuring ABV to use Simulated state feedback"; 
+            LOGD << "Configuring ABV to use Simulated state data"; 
             
             break;
         case FetcherType::OPTITRACK: 
             
             mStateFetcher = std::make_shared<OptitrackStateFetcher>(mConfig.mServerIp, mConfig.mLocalIp, mConfig.mRigidBodyId, aRigidBodyName); 
-            LOGD << "Configuring ABV to use OptiTrack for state feedback"; 
+            LOGD << "Configuring ABV to use OptiTrack for state data"; 
             
             break;
         default:
             break;
-    } 
+    }
 
     setStateTracking(false); 
     mStateTrackingThread = std::thread(&VehicleStateTracker::stateTrackerLoop, this); 
@@ -70,7 +68,7 @@ VehicleStateTracker::FetcherType VehicleStateTracker::toEnum(std::string aTracke
     return enumToReturn; 
 }
 
-void VehicleStateTracker::run()
+void VehicleStateTracker::stateTrackerLoop()
 {  
     RateController rate(mConfig.mRate); 
     
@@ -87,7 +85,7 @@ void VehicleStateTracker::run()
         sleep(1); 
     }
 
-    auto logId = DataLogger::get().createLog("Navigation"); 
+    auto logId = DataLogger::get().createLog("state"); 
 
     LOGD << "Starting state tracking thread";
     setStateTracking(true); 
@@ -97,7 +95,7 @@ void VehicleStateTracker::run()
         rate.start(); 
 
         auto state = mStateFetcher->fetchState();
-        setCurrentState(state); 
+        mStatePublisher.publish(state);  
         DataLogger::get().write(logId, toVector(state)); 
 
         rate.block(); 

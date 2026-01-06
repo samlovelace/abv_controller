@@ -5,6 +5,7 @@
 #include "common/SignalHandler.hpp"
 #include "common/ConfigurationManager.h"
 #include "abv_navigation/VehicleStateTracker.h"
+#include "abv_navigation/RosStatePublisher.h"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 int main()
@@ -23,9 +24,14 @@ int main()
     
     rclcpp::init(0, nullptr);
     RosTopicManager::getInstance("abv_navigation"); 
+    RosTopicManager::getInstance()->spinNode(); 
 
     VehicleStateTracker stateTracker("abv");
-    stateTracker.run(); 
+
+    while(true)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
+    }
 
     rclcpp::shutdown(); 
 }
