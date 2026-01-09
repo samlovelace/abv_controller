@@ -18,33 +18,33 @@ RosStatePublisher::~RosStatePublisher()
 
 }
 
-void RosStatePublisher::publish(const Eigen::Matrix<float, 12, 1>& aState)
+void RosStatePublisher::publish(const AbvState& aState)
 {
     RosTopicManager::getInstance()->publishMessage<robot_idl::msg::AbvState>(mTopicName, convertToIdlMsg(aState)); 
 }
 
-robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(const Eigen::Matrix<float, 12, 1>& aStateVector)
+robot_idl::msg::AbvState RosStatePublisher::convertToIdlMsg(const AbvState& aStateVector)
 {
     robot_idl::msg::Vec3 position; 
     robot_idl::msg::Vec3 velocity;
 
-    position.x = aStateVector[0]; 
-    position.y = aStateVector[1]; 
-    position.z = aStateVector[2]; 
+    position.x = aStateVector.x; 
+    position.y = aStateVector.y; 
+    position.z = 0.0; 
 
-    velocity.x = aStateVector[3]; 
-    velocity.y = aStateVector[4]; 
-    velocity.z = aStateVector[5]; 
+    velocity.x = aStateVector.vx; 
+    velocity.y = aStateVector.vy; 
+    velocity.z = 0.0; 
     
     robot_idl::msg::Vec3 orientation; 
-    orientation.x = aStateVector[8];
-    orientation.y = aStateVector[7]; 
-    orientation.z = aStateVector[6]; 
+    orientation.x = 0.0;
+    orientation.y = 0.0; 
+    orientation.z = aStateVector.theta;  
 
     robot_idl::msg::Vec3 ang_vel; 
-    ang_vel.x = aStateVector[11];
-    ang_vel.y = aStateVector[10]; 
-    ang_vel.z = aStateVector[9]; 
+    ang_vel.x = 0.0;
+    ang_vel.y = 0.0; 
+    ang_vel.z = aStateVector.omega; 
 
     robot_idl::msg::AbvState state; 
     state.set__position(position); 

@@ -11,13 +11,13 @@ public:
     ~SimulatedStateFetcher() override; 
 
     bool init() override; 
-    Eigen::Matrix<float, 12,1> fetchState() override; 
+    AbvState fetchState() override; 
     std::string type() {return "Simulated"; }
 
 private:
 
     void stateCallback(robot_idl::msg::AbvState::SharedPtr aSimState); 
-    void setState(Eigen::Matrix<float, 12, 1> aState); 
+    void setState(const AbvState& aState); 
 
 private: 
     

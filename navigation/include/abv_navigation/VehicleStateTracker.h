@@ -39,7 +39,5 @@ private:
     std::thread mStateTrackingThread;  
 
     VehicleStateTracker::FetcherType toEnum(std::string aTrackerType);
-    std::vector<double> toVector(const Eigen::Matrix<float, 12, 1>& aState);
-
 };
 #endif // VEHICLESTATETRACKER_H

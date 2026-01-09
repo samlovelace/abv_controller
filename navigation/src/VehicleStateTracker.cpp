@@ -94,23 +94,10 @@ void VehicleStateTracker::stateTrackerLoop()
     {
         rate.start(); 
 
-        auto state = mStateFetcher->fetchState();
+        AbvState state = mStateFetcher->fetchState();
         mStatePublisher.publish(state);  
         DataLogger::get().write(logId, toVector(state)); 
 
         rate.block(); 
     }
-}
-
-std::vector<double> VehicleStateTracker::toVector(const Eigen::Matrix<float, 12, 1>& aState)
-{
-    std::vector<double> state;
-    state.resize(aState.size());  
-
-    for(int i = 0; i < aState.size(); i++)
-    {
-        state[i] = aState[i]; 
-    }
-
-    return state; 
 }

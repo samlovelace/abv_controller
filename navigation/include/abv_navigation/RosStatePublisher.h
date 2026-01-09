@@ -1,9 +1,11 @@
 #ifndef ROSSTATEPUBLISHER_H
 #define ROSSTATEPUBLISHER_H
 
-#include "common/Configurations.h"
-#include "robot_idl/msg/abv_state.hpp"
 #include <thread> 
+
+#include "common/Configurations.h"
+#include "common/AbvState.hpp"
+#include "robot_idl/msg/abv_state.hpp"
 
 class RosStatePublisher
 {
@@ -11,12 +13,12 @@ public:
     RosStatePublisher();
     ~RosStatePublisher();
 
-    void publish(const Eigen::Matrix<float, 12, 1>& aState); 
+    void publish(const AbvState& aState); 
 
 private:
     
     std::string mTopicName; 
-    robot_idl::msg::AbvState convertToIdlMsg(const Eigen::Matrix<float, 12, 1>& aStateVector); 
+    robot_idl::msg::AbvState convertToIdlMsg(const AbvState& aStateVector); 
 };
 
 #endif // ROSSTATEPUBLISHER_H
