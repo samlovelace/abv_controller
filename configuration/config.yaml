@@ -4,9 +4,7 @@ StateMachine:
 Vehicle:
   Name: ABV1
   Mass: 12.6 # kg
-  Inertia: 0.3 # kg-m^2
-  Force1: 0.15 # N
-  Force2: 0.08 # N
+  Inertia: 0.3 # kg-m^2m
 
 StateTracker:
   Interface: simulated
@@ -30,6 +28,9 @@ Controller:
   Kd: [15.0, 15.0, 15.0]
 
 Thrusters:
+  Force: 0.08 # N
+  MomentArm: 0.15 #
+
   InputDiscretization:
     On: 0.2
     Off: 0.09

@@ -20,6 +20,7 @@ add_subdirectory(
 )
 
 set(SOURCES
+  src/ExtendedKalmanFilter.cpp
 	src/OptitrackStateFetcher_LibMocap.cpp
   src/RosStatePublisher.cpp
 	src/SimulatedStateFetcher.cpp

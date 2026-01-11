@@ -2,17 +2,24 @@
 #include "abv_controller/StateMachine.h"
 #include "common/RateController.hpp"
 #include "common/ConfigurationManager.h"
-#include <thread>
+#include "common/RosTopicManager.h"
 #include <iostream> 
 #include "plog/Log.h"
+
+#include "robot_idl/msg/abv_controller_status.hpp"
 
 StateMachine::StateMachine(std::shared_ptr<Vehicle> abv) : 
     mDone(false), mActiveState(States::STARTUP), mVehicle(abv)
 {
+    RosTopicManager::getInstance()->createPublisher<robot_idl::msg::AbvControllerStatus>("abv/controller_status"); 
 }
 
 StateMachine::~StateMachine()
 {
+    if(mControlStatusPublishThread.joinable())
+    {
+        mControlStatusPublishThread.join(); 
+    }
 }
 
 void StateMachine::run()
@@ -22,7 +29,7 @@ void StateMachine::run()
 
     LOGD << "State Machine starting in " << toString(mActiveState);
 
-    while(!isCommandedToStop())
+    while(!isDone())
     {
         rate.start(); 
 
@@ -32,6 +39,7 @@ void StateMachine::run()
             
             if(mVehicle->hasAcquiredStateData())
             {
+                mControlStatusPublishThread = std::thread(&StateMachine::controlStatusPublishLoop, this);
                 setActiveState(States::IDLE); 
                 break; 
             }
@@ -106,4 +114,32 @@ std::string StateMachine::toString(StateMachine::States aState)
     }
 
     return stringToReturn; 
+}
+
+void StateMachine::controlStatusPublishLoop()
+{
+    // publish control status at same rate as StateMachine loop 
+    auto config = ConfigurationManager::getInstance()->getStateMachineConfig(); 
+    RateController rate(config.mRate); 
+
+    LOGV << "Starting control status publish loop"; 
+
+    while(!isDone())
+    {
+        rate.start(); 
+
+        // get needed data from wherever 
+        // TODO: maybe add state machine state to this msg being published
+        Eigen::Vector3d status = mVehicle->getControlStatus(); 
+
+
+        robot_idl::msg::AbvControllerStatus statusToSend; 
+        statusToSend.set__fx(status.x()); 
+        statusToSend.set__fy(status.y()); 
+        statusToSend.set__tz(status.z()); 
+
+        RosTopicManager::getInstance()->publishMessage<robot_idl::msg::AbvControllerStatus>("abv/controller_status", statusToSend); 
+
+        rate.block(); 
+    }
 }

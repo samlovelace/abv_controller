@@ -17,6 +17,8 @@ public:
 
     void commandThrusters(Eigen::Vector3d aControlInput); 
 
+    Eigen::Vector3d getAppliedThrustVector(); 
+
 protected:
     Eigen::Vector3i convertToThrustVector(Eigen::Vector3d aControlInput); 
     void determineThrusterCommand(Eigen::Vector3i aThrustDirVec);
@@ -25,6 +27,10 @@ protected:
     std::string mThrusterCommand; 
     std::mutex mThrusterCommandMutex;
     Eigen::Matrix<int, 3, 27> mMatrixOfThrustDirCombinations; 
+
+    double mThrusterForce; 
+    double mMomentArm; 
+    Eigen::Vector3d mAppliedThrustVector; 
 
     std::unique_ptr<IThrusterDriver> mThrusterDriver; 
 

@@ -4,6 +4,7 @@
 #include "abv_navigation/SimulatedStateFetcher.h"
 #include "common/RateController.hpp"
 #include "common/DataLogger.h"
+#include "common/RosTopicManager.h"
 #include "plog/Log.h"
 #include <thread>
 
@@ -34,6 +35,12 @@ VehicleStateTracker::VehicleStateTracker(const std::string& aRigidBodyName) :
 
     setStateTracking(false); 
     mStateTrackingThread = std::thread(&VehicleStateTracker::stateTrackerLoop, this); 
+
+    // setup subscriber to get control status 
+    RosTopicManager::getInstance()->createSubscriber<robot_idl::msg::AbvControllerStatus>("abv/controller_status", 
+                                                                                          std::bind(&VehicleStateTracker::controllerStatusCallback, 
+                                                                                          this, 
+                                                                                          std::placeholders::_1)); 
 }
 
 VehicleStateTracker::~VehicleStateTracker()
@@ -90,14 +97,25 @@ void VehicleStateTracker::stateTrackerLoop()
     LOGD << "Starting state tracking thread";
     setStateTracking(true); 
 
+    AbvState stateEstimate; 
+
     while(doStateTracking())
     {
         rate.start(); 
 
         AbvState state = mStateFetcher->fetchState();
-        mStatePublisher.publish(state);  
-        DataLogger::get().write(logId, toVector(state)); 
+        mEKF.update(state, stateEstimate); 
+
+        mStatePublisher.publish(stateEstimate);  
+        DataLogger::get().write(logId, toVector(stateEstimate)); 
 
         rate.block(); 
     }
+}
+
+void VehicleStateTracker::controllerStatusCallback(robot_idl::msg::AbvControllerStatus::ConstSharedPtr aMsg)
+{
+    Eigen::Vector3d appliedThrust; 
+    appliedThrust << aMsg->fx, aMsg->fy, aMsg->tz; 
+    mEKF.setLatestInput(appliedThrust); 
 }

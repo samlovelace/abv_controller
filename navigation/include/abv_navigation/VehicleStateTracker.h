@@ -1,12 +1,16 @@
 #ifndef VEHICLESTATETRACKER_H
 #define VEHICLESTATETRACKER_H
 
+#include <memory>
+#include <thread> 
+
 #include "abv_navigation/IStateFetcher.h"
 #include "common/Configurations.h"
 #include "common/ConfigurationManager.h"
 #include "RosStatePublisher.h"
-#include <memory>
-#include <thread> 
+#include "ExtendedKalmanFilter.h"
+
+#include "robot_idl/msg/abv_controller_status.hpp"
 
 class VehicleStateTracker
 {
@@ -33,11 +37,19 @@ private:
     RosStatePublisher mStatePublisher; 
     StateTrackerConfig mConfig; 
 
+    // TODO: add subscription to ControllerStatus, pass latest input to EKF
+    ExtendedKalmanFilter mEKF; 
+
     bool mDoStateTracking;
 
     std::mutex mStateTrackingMutex; 
     std::thread mStateTrackingThread;  
 
     VehicleStateTracker::FetcherType toEnum(std::string aTrackerType);
+
+    std::mutex mControlInputMutex; 
+    Eigen::Vector3d mLatestControlInput; 
+    void controllerStatusCallback(robot_idl::msg::AbvControllerStatus::ConstSharedPtr aMsg);
+    
 };
 #endif // VEHICLESTATETRACKER_H

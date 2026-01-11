@@ -33,6 +33,8 @@ public:
     bool isControlInputStale(); 
     bool hasAcquiredStateData(); 
 
+    Eigen::Vector3d getControlStatus(); 
+
 private:
     Eigen::Vector3d mGoalPose; 
     Eigen::Vector3d mGoalVelocity; 
@@ -50,6 +52,7 @@ private:
 
 private: 
     Eigen::Vector3d convertToBodyFrame(Eigen::Vector3d aControlInputGlobal); 
+
 
 
 };

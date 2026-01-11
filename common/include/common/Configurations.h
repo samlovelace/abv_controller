@@ -28,7 +28,9 @@ struct ThrusterConfig
     double uOn;
     double uOff;
     std::string mType; 
-    std::vector<int> mGpioPins; 
+    std::vector<int> mGpioPins;
+    double mForce; 
+    double mMomentArm; 
 };
 struct ControllerConfig 
 {
@@ -42,8 +44,6 @@ struct VehicleConfig
     std::string Name;
     double Mass;
     double Inertia;
-    double Force1;
-    double Force2;
 
     StateTrackerConfig stateTrackerConfig;
     StatePublisherConfig statePublisherConfig; 

@@ -1,7 +1,9 @@
 
+#include <thread>
+
 #include "abv_controller/Vehicle.h"
 #include "plog/Log.h"
-#include <thread>
+#include "common/RateController.hpp"
 
 
 Vehicle::Vehicle(/* args */) : 
@@ -118,4 +120,12 @@ void Vehicle::stop()
     Eigen::Vector3d zeros = Eigen::Vector3d::Zero();  
     setControlInput(zeros); 
     doThrusterControl(); 
+}
+
+Eigen::Vector3d Vehicle::getControlStatus()
+{
+    // TODO: expand this to include more controller status related stuff
+    // For now, just getting the theoretical thruster vector 
+
+    return mThrusterCommander->getAppliedThrustVector(); 
 }

@@ -39,8 +39,6 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.Name = vehicleNode["Name"].as<std::string>();
     mConfigurations.vehicleConfig.Mass = vehicleNode["Mass"].as<double>();
     mConfigurations.vehicleConfig.Inertia = vehicleNode["Inertia"].as<double>();
-    mConfigurations.vehicleConfig.Force1 = vehicleNode["Force1"].as<double>();
-    mConfigurations.vehicleConfig.Force2 = vehicleNode["Force2"].as<double>();
 
     // Parse Controller Gains
     YAML::Node controllerNode = config["Controller"];
@@ -49,6 +47,9 @@ bool ConfigurationManager::loadConfiguration(const std::string& aFilePath)
     mConfigurations.vehicleConfig.controllerConfig.Kd = ConfigUtils::parseVector3d(controllerNode["Kd"]);
 
     // Parse Thrusters
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.mForce = config["Thrusters"]["Force"].as<double>(); 
+    mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.mMomentArm = config["Thrusters"]["MomentArm"].as<double>();
+
     YAML::Node thrusterNode = config["Thrusters"]["InputDiscretization"];
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOn = thrusterNode["On"].as<double>();
     mConfigurations.vehicleConfig.controllerConfig.thrusterConfig.uOff = thrusterNode["Off"].as<double>();
